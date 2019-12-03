@@ -1,12 +1,13 @@
 const getProfileRating = (watchedFilmsNumber) => {
-  if (watchedFilmsNumber === 0) {
-    return ``;
-  } if (watchedFilmsNumber >= 1 && watchedFilmsNumber < 11) {
-    return `Novice`;
-  } if (watchedFilmsNumber >= 11 && watchedFilmsNumber < 21) {
-    return `Fan`;
-  } else {
-    return `Movie Buff`;
+  switch (true) {
+    case (watchedFilmsNumber === 0):
+      return ``;
+    case (watchedFilmsNumber >= 1 && watchedFilmsNumber < 11):
+      return `Novice`;
+    case (watchedFilmsNumber >= 11 && watchedFilmsNumber < 21):
+      return `Fan`;
+    default:
+      return `Movie Buff`;
   }
 };
 

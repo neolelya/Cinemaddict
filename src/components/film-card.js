@@ -1,17 +1,19 @@
 export const createFilmCardTemplate = (filmData) => {
+  const {title, rating, year, duration, genre, poster, description, comments} = filmData;
+
   return (
     `<article class="film-card">
-        <h3 class="film-card__title">${filmData.title}</h3>
-        <p class="film-card__rating">${filmData.rating}</p>
+        <h3 class="film-card__title">${title}</h3>
+        <p class="film-card__rating">${rating}</p>
         <p class="film-card__info">
-          <span class="film-card__year">${filmData.year}</span>
-          <span class="film-card__duration">${filmData.duration}</span>
-          <span class="film-card__genre">${filmData.genre}</span>
+          <span class="film-card__year">${year}</span>
+          <span class="film-card__duration">${duration}</span>
+          <span class="film-card__genre">${genre}</span>
         </p>
-        <img src="${filmData.poster}" alt="" class="film-card__poster">
-        <p class="film-card__description">${filmData.description}</p>
+        <img src="${poster}" alt="" class="film-card__poster">
+        <p class="film-card__description">${description}</p>
         <a class="film-card__comments">
-            ${filmData.comments.length} comment${filmData.comments.length > 1 ? `s` : ``}
+            ${comments.length} comment${comments.length > 1 ? `s` : ``}
         </a>
         <form class="film-card__controls">
           <button class="film-card__controls-item button film-card__controls-item--add-to-watchlist"></button>

@@ -1,6 +1,6 @@
 import {getRandomIntegerNumber, getRandomArrayItem} from '../utils';
 
-const Titles = [
+const TITLES = [
   `The Irishman`,
   `Once Upon a Time... in Hollywood`,
   `Doctor Sleep`,
@@ -18,7 +18,7 @@ const Titles = [
   `The Courier`
 ];
 
-const Posters = [
+const POSTERS = [
   `/images/posters/made-for-each-other.png`,
   `/images/posters/popeye-meets-sinbad.png`,
   `/images/posters/sagebrush-trail.jpg`,
@@ -28,7 +28,7 @@ const Posters = [
   `/images/posters/the-man-with-the-golden-arm.jpg`
 ];
 
-const Descriptions = [
+const DESCRIPTIONS = [
   `Lorem ipsum dolor sit amet, consectetur adipiscing elit.`,
   `Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra.`,
   `Aliquam id orci ut lectus varius viverra.`,
@@ -41,7 +41,7 @@ const Descriptions = [
   `In rutrum ac purus sit amet tempus.`
 ];
 
-const Peoples = [
+const PEOPLES = [
   `Anthony Mann`,
   `Heinz Herald`,
   `Anne Wigton`,
@@ -51,23 +51,23 @@ const Peoples = [
   `Dan Duryea`
 ];
 
-const Countries = [`USA`, `UK`, `Spain`, `Russia`, `Italy`, `Canada`, `Hungary`];
+const COUNTRIES = [`USA`, `UK`, `Spain`, `Russia`, `Italy`, `Canada`, `Hungary`];
 
-const Genres = [`Musical`, `Drama`, `Comedy`, `Cartoon`, `Western`, `Series`, `Film-Noir`, `Mystery`];
+const GENRES = [`Musical`, `Drama`, `Comedy`, `Cartoon`, `Western`, `Series`, `Film-Noir`, `Mystery`];
 
-const Ages = [`18+`, `10+`, `8+`, `2+`];
+const AGES = [`18+`, `10+`, `8+`, `2+`];
 
-const Emojies = [
-  `./images/emoji/smile.png`,
-  `./images/emoji/sleeping.png`,
-  `./images/emoji/puke.png`,
-  `./images/emoji/angry.png`
+const EMOJIES = [
+  `/images/emoji/smile.png`,
+  `/images/emoji/sleeping.png`,
+  `/images/emoji/puke.png`,
+  `/images/emoji/angry.png`
 ];
 
 const getRandomDescription = () => {
   return new Array(getRandomIntegerNumber(1, 3))
     .fill(``)
-    .map(() => getRandomArrayItem(Descriptions))
+    .map(() => getRandomArrayItem(DESCRIPTIONS))
     .join(` `);
 };
 
@@ -84,7 +84,7 @@ const getRandomDuration = () => {
 const getRandomActors = () => {
   return new Array(getRandomIntegerNumber(1, 5))
     .fill(``)
-    .map(() => getRandomArrayItem(Peoples))
+    .map(() => getRandomArrayItem(PEOPLES))
     .join(` `);
 };
 
@@ -116,21 +116,21 @@ const getRandomGenres = (genres) => {
 
 const generateFilm = () => {
   return {
-    title: getRandomArrayItem(Titles),
+    title: getRandomArrayItem(TITLES),
     rating: `${getRandomIntegerNumber(5, 9)}.${getRandomIntegerNumber(0, 9)}`,
     year: getRandomIntegerNumber(1960, 2019),
     duration: getRandomDuration(),
-    genre: getRandomArrayItem(Genres),
-    poster: getRandomArrayItem(Posters),
+    genre: getRandomArrayItem(GENRES),
+    poster: getRandomArrayItem(POSTERS),
     description: getRandomDescription(),
     comments: generateComments(getRandomIntegerNumber(0, 20)),
-    director: getRandomArrayItem(Peoples),
-    writer: getRandomArrayItem(Peoples),
+    director: getRandomArrayItem(PEOPLES),
+    writer: getRandomArrayItem(PEOPLES),
     actors: getRandomActors(),
     releaseDate: getRandomDate(),
-    country: getRandomArrayItem(Countries),
-    genres: new Set(getRandomGenres(Genres)),
-    age: getRandomArrayItem(Ages),
+    country: getRandomArrayItem(COUNTRIES),
+    genres: new Set(getRandomGenres(GENRES)),
+    age: getRandomArrayItem(AGES),
     isWatchlist: Math.random() > 0.5,
     isHistory: Math.random() > 0.5,
     isFavorites: Math.random() > 0.5,
@@ -139,9 +139,9 @@ const generateFilm = () => {
 
 const generateComment = () => {
   return {
-    emoji: getRandomArrayItem(Emojies),
-    comment: getRandomArrayItem(Descriptions),
-    userName: getRandomArrayItem(Peoples),
+    emoji: getRandomArrayItem(EMOJIES),
+    comment: getRandomArrayItem(DESCRIPTIONS),
+    userName: getRandomArrayItem(PEOPLES),
     date: getRandomCommentDate()
   };
 };

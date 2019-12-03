@@ -1,9 +1,5 @@
 const createGenreTemplate = (genres) => {
-  let result = ``;
-  for (let genre of genres) {
-    result += `<span class="film-details__genre">${genre}</span>`;
-  }
-  return result;
+  return Array.from(genres).map((genre) => `<span class="film-details__genre">${genre}</span>`).join(``);
 };
 
 const createCommentsTemplate = (comments) => {
@@ -17,26 +13,26 @@ const createCommentsTemplate = (comments) => {
 
   let dateTimeFormatter = new Intl.DateTimeFormat(`en-GB`, options);
 
-  let result = ``;
-  for (let comment of comments) {
-    result += `<li class="film-details__comment">
-                <span class="film-details__comment-emoji">
-                  <img src="${comment.emoji}" width="55" height="55" alt="emoji">
-                </span>
-                <div>
-                  <p class="film-details__comment-text">${comment.comment}</p>
-                  <p class="film-details__comment-info">
-                    <span class="film-details__comment-author">${comment.userName}</span>
-                    <span class="film-details__comment-day">${dateTimeFormatter.format(comment.date)}</span>
-                    <button class="film-details__comment-delete">Delete</button>
-                  </p>
-                </div>
-              </li>`;
-  }
-  return result;
+  return Array.from(comments)
+    .map((comment) => (`<li class="film-details__comment">
+                            <span class="film-details__comment-emoji">
+                                <img src="${comment.emoji}" width="55" height="55" alt="emoji">
+                            </span>
+                            <div>
+                                <p class="film-details__comment-text">${comment.comment}</p>
+                                <p class="film-details__comment-info">
+                                    <span class="film-details__comment-author">${comment.userName}</span>
+                                    <span class="film-details__comment-day">${dateTimeFormatter.format(comment.date)}</span>
+                                    <button class="film-details__comment-delete">Delete</button>
+                                </p>
+                            </div>
+                        </li>`))
+    .join(``);
 };
 
 export const createFilmDetailsTemplate = (filmData) => {
+  const {poster, age, title, rating, director, writer, actors, releaseDate, duration, country, genres, description} = filmData;
+
   return (
     `<section class="film-details">
       <form class="film-details__inner" action="" method="get">
@@ -46,56 +42,56 @@ export const createFilmDetailsTemplate = (filmData) => {
           </div>
           <div class="film-details__info-wrap">
             <div class="film-details__poster">
-              <img class="film-details__poster-img" src="${filmData.poster}" alt="">
-              <p class="film-details__age">${filmData.age}</p>
+              <img class="film-details__poster-img" src="${poster}" alt="">
+              <p class="film-details__age">${age}</p>
             </div>
 
             <div class="film-details__info">
               <div class="film-details__info-head">
                 <div class="film-details__title-wrap">
-                  <h3 class="film-details__title">${filmData.title}</h3>
-                  <p class="film-details__title-original">Original: ${filmData.title}</p>
+                  <h3 class="film-details__title">${title}</h3>
+                  <p class="film-details__title-original">Original: ${title}</p>
                 </div>
 
                 <div class="film-details__rating">
-                  <p class="film-details__total-rating">${filmData.rating}</p>
+                  <p class="film-details__total-rating">${rating}</p>
                 </div>
               </div>
 
               <table class="film-details__table">
                 <tr class="film-details__row">
                   <td class="film-details__term">Director</td>
-                  <td class="film-details__cell">${filmData.director}</td>
+                  <td class="film-details__cell">${director}</td>
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Writers</td>
-                  <td class="film-details__cell">${filmData.writer}</td>
+                  <td class="film-details__cell">${writer}</td>
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Actors</td>
-                  <td class="film-details__cell">${filmData.actors}</td>
+                  <td class="film-details__cell">${actors}</td>
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Release Date</td>
-                  <td class="film-details__cell">${filmData.releaseDate}</td>
+                  <td class="film-details__cell">${releaseDate}</td>
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Runtime</td>
-                  <td class="film-details__cell">${filmData.duration}</td>
+                  <td class="film-details__cell">${duration}</td>
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Country</td>
-                  <td class="film-details__cell">${filmData.country}</td>
+                  <td class="film-details__cell">${country}</td>
                 </tr>
                 <tr class="film-details__row">
-                  <td class="film-details__term">Genre${filmData.genres.size > 1 ? `s` : ``}</td>
+                  <td class="film-details__term">Genre${genres.size > 1 ? `s` : ``}</td>
                   <td class="film-details__cell">
-                    ${createGenreTemplate(filmData.genres)}
+                    ${createGenreTemplate(genres)}
                   </td>
                 </tr>
               </table>
 
-              <p class="film-details__film-description">${filmData.description}</p>
+              <p class="film-details__film-description">${description}</p>
             </div>
           </div>
 

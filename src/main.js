@@ -1,5 +1,5 @@
 import {createUserProfileTemplate} from './components/user-profile';
-import {createMenuTemplate} from './components/menu';
+import {createMenuFiltersTemplate} from './components/menu';
 import {createFilmCardsContainerTemplate} from './components/films-container';
 import {createFilmCardTemplate} from './components/film-card';
 import {createShowMoreButtonTemplate} from './components/show-more-button';
@@ -13,6 +13,8 @@ const WATCHED_FILMS_QUANTITY = 5;
 const SHOWING_FILMS_ON_START = 5;
 const ADDED_FILMS_BY_BUTTON = 5;
 
+const EXTRAS = [`Top rated`, `Most commented`];
+
 const render = (container, template, place) => {
   container.insertAdjacentHTML(place, template);
 };
@@ -25,7 +27,7 @@ const siteHeaderElement = document.querySelector(`.header`);
 render(siteHeaderElement, createUserProfileTemplate(WATCHED_FILMS_QUANTITY), `beforeend`);
 
 const filters = generateFilters(generatedFilms);
-render(siteMainElement, createMenuTemplate(filters), `beforeend`);
+render(siteMainElement, createMenuFiltersTemplate(filters), `beforeend`);
 render(siteMainElement, createFilmCardsContainerTemplate(), `beforeend`);
 
 const filmsListContainer = document.querySelector(`.films-list__container`);
@@ -47,16 +49,18 @@ const mostCommentedFilms = [...generatedFilms]
   .sort((first, second) => second.comments.length - first.comments.length)
   .slice(0, 2);
 
-[{title: `Top rated`, films: topRatedFilms}, {title: `Most commented`, films: mostCommentedFilms}]
-  .forEach((data) => {
-    if (data.films.length > 0) {
-      render(siteMainElement, createFilmCardsExtraContainerTemplate(data), `beforeend`);
-    }
+if (topRatedFilms.length > 0) {
+  render(siteMainElement, createFilmCardsExtraContainerTemplate(EXTRAS[0]), `beforeend`);
+}
 
-    const last = (arr) => arr[arr.length - 1];
-    const filmsListExtraContainer = last(document.querySelectorAll(`.films-list--extra .films-list__container`));
-    data.films.forEach((film) => render(filmsListExtraContainer, createFilmCardTemplate(film), `beforeend`));
-  });
+if (mostCommentedFilms.length > 0) {
+  render(siteMainElement, createFilmCardsExtraContainerTemplate(EXTRAS[1]), `beforeend`);
+}
+
+const filmsListExtraContainer = document.querySelectorAll(`.films-list--extra .films-list__container`);
+topRatedFilms.forEach((film) => render(filmsListExtraContainer[0], createFilmCardTemplate(film), `beforeend`));
+mostCommentedFilms.forEach((film) => render(filmsListExtraContainer[1], createFilmCardTemplate(film), `beforeend`));
+
 
 const siteFooterElement = document.querySelector(`.footer`);
 render(siteFooterElement, createFilmDetailsTemplate(generateFilm()), `afterend`);
