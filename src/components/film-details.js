@@ -1,3 +1,5 @@
+import {createElement} from '../utils';
+
 const createGenreTemplate = (genres) => {
   return Array.from(genres).map((genre) => `<span class="film-details__genre">${genre}</span>`).join(``);
 };
@@ -30,9 +32,7 @@ const createCommentsTemplate = (comments) => {
     .join(``);
 };
 
-export const createFilmDetailsTemplate = (filmData) => {
-  const {poster, age, title, rating, director, writer, actors, releaseDate, duration, country, genres, description} = filmData;
-
+const createFilmDetailsTemplate = ({poster, age, title, rating, director, writer, actors, releaseDate, duration, country, genres, description, comments}) => {
   return (
     `<section class="film-details">
       <form class="film-details__inner" action="" method="get">
@@ -112,7 +112,7 @@ export const createFilmDetailsTemplate = (filmData) => {
             <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count"></span></h3>
 
             <ul class="film-details__comments-list">
-              ${createCommentsTemplate(filmData.comments)}
+              ${createCommentsTemplate(comments)}
             </ul>
 
             <div class="film-details__new-comment">
@@ -150,3 +150,26 @@ export const createFilmDetailsTemplate = (filmData) => {
     </section>`
   );
 };
+
+export default class FilmDetails {
+  constructor(film) {
+    this._element = null;
+    this._film = film;
+  }
+
+  getTemplate() {
+    return createFilmDetailsTemplate(this._film);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
