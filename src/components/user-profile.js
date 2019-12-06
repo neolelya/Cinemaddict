@@ -1,3 +1,5 @@
+import {createElement} from '../utils';
+
 const getProfileRating = (watchedFilmsNumber) => {
   switch (true) {
     case (watchedFilmsNumber === 0):
@@ -11,7 +13,7 @@ const getProfileRating = (watchedFilmsNumber) => {
   }
 };
 
-export const createUserProfileTemplate = (watchedFilmsNumber) => {
+const createUserProfileTemplate = (watchedFilmsNumber) => {
   return (
     `<section class="header__profile profile">
         <p class="profile__rating">${getProfileRating(watchedFilmsNumber)}</p>
@@ -19,3 +21,26 @@ export const createUserProfileTemplate = (watchedFilmsNumber) => {
     </section>`
   );
 };
+
+export default class UserProfile {
+  constructor(watchedFilmsNumber) {
+    this._element = null;
+    this._watchedFilmsNumber = watchedFilmsNumber;
+  }
+
+  getTemplate() {
+    return createUserProfileTemplate(this._watchedFilmsNumber);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

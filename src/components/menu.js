@@ -1,4 +1,6 @@
-export const createMenuFiltersTemplate = (data) => {
+import {createElement} from '../utils';
+
+const createMenuFiltersTemplate = (data) => {
   return (
     `<nav class="main-navigation">
       <a href="#all" class="main-navigation__item main-navigation__item--active">All movies</a>
@@ -15,3 +17,26 @@ export const createMenuFiltersTemplate = (data) => {
     </ul>`
   );
 };
+
+export default class MenuFilters {
+  constructor(data) {
+    this._element = null;
+    this._data = data;
+  }
+
+  getTemplate() {
+    return createMenuFiltersTemplate(this._data);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
