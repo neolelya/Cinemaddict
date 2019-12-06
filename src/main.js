@@ -28,6 +28,7 @@ render(siteMainElement, new MenuFiltersComponent(filters).getElement(), RenderPo
 render(siteMainElement, new FilmsContainerComponent().getElement(), RenderPosition.BEFOREEND);
 
 const filmsListContainer = document.querySelector(`.films-list__container`);
+const filmsList = document.querySelector(`.films`);
 
 let showingTasksCount = SHOWING_FILMS_ON_START;
 
@@ -65,11 +66,11 @@ const mostCommentedFilms = [...generatedFilms]
   .slice(0, 2);
 
 if (topRatedFilms.length > 0) {
-  render(siteMainElement, new FilmsExtraContainerComponent(EXTRAS[0]).getElement(), RenderPosition.BEFOREEND);
+  render(filmsList, new FilmsExtraContainerComponent(EXTRAS[0]).getElement(), RenderPosition.BEFOREEND);
 }
 
 if (mostCommentedFilms.length > 0) {
-  render(siteMainElement, new FilmsExtraContainerComponent(EXTRAS[1]).getElement(), RenderPosition.BEFOREEND);
+  render(filmsList, new FilmsExtraContainerComponent(EXTRAS[1]).getElement(), RenderPosition.BEFOREEND);
 }
 
 const filmsListExtraContainer = document.querySelectorAll(`.films-list--extra .films-list__container`);
