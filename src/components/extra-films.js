@@ -1,6 +1,6 @@
 import {createElement} from '../utils';
 
-const createFilmsExtraContainerTemplate = (title) => {
+const createExtraFilmsTemplate = (title) => {
   return (
     `<section class="films-list--extra">
       <h2 class="films-list__title">${title}</h2>
@@ -17,7 +17,7 @@ export default class FilmsExtraContainer {
   }
 
   getTemplate() {
-    return createFilmsExtraContainerTemplate(this._title);
+    return createExtraFilmsTemplate(this._title);
   }
 
   getElement() {

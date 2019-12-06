@@ -22,7 +22,7 @@ const createUserProfileTemplate = (watchedFilmsNumber) => {
   );
 };
 
-export default class UserProfile {
+export default class ProfileRating {
   constructor(watchedFilmsNumber) {
     this._element = null;
     this._watchedFilmsNumber = watchedFilmsNumber;
