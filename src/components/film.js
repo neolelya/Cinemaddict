@@ -1,6 +1,6 @@
 import {createElement} from '../utils';
 
-const createFilmCardTemplate = ({title, rating, year, duration, genre, poster, description, comments}) => {
+const createFilmTemplate = ({title, rating, year, duration, genre, poster, description, comments}) => {
   return (
     `<article class="film-card">
         <h3 class="film-card__title">${title}</h3>
@@ -24,14 +24,14 @@ const createFilmCardTemplate = ({title, rating, year, duration, genre, poster, d
   );
 };
 
-export default class FilmCard {
+export default class Film {
   constructor(film) {
     this._element = null;
     this._film = film;
   }
 
   getTemplate() {
-    return createFilmCardTemplate(this._film);
+    return createFilmTemplate(this._film);
   }
 
   getElement() {

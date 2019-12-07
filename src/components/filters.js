@@ -1,6 +1,6 @@
 import {createElement} from '../utils';
 
-const createMenuFiltersTemplate = (data) => {
+const createFiltersTemplate = (data) => {
   return (
     `<nav class="main-navigation">
       <a href="#all" class="main-navigation__item main-navigation__item--active">All movies</a>
@@ -8,13 +8,7 @@ const createMenuFiltersTemplate = (data) => {
       <a href="#history" class="main-navigation__item">${data.history.name[0].toUpperCase()}${data.history.name.slice(1)} <span class="main-navigation__item-count">${data.history.count}</span></a>
       <a href="#favorites" class="main-navigation__item">${data.favorites.name[0].toUpperCase()}${data.favorites.name.slice(1)} <span class="main-navigation__item-count">${data.favorites.count}</span></a>
       <a href="#stats" class="main-navigation__item main-navigation__item--additional">Stats</a>
-    </nav>
-      
-    <ul class="sort">
-      <li><a href="#" class="sort__button sort__button--active">Sort by default</a></li>
-      <li><a href="#" class="sort__button">Sort by date</a></li>
-      <li><a href="#" class="sort__button">Sort by rating</a></li>
-    </ul>`
+    </nav>`
   );
 };
 
@@ -25,7 +19,7 @@ export default class MenuFilters {
   }
 
   getTemplate() {
-    return createMenuFiltersTemplate(this._data);
+    return createFiltersTemplate(this._data);
   }
 
   getElement() {
