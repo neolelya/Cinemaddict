@@ -1,4 +1,4 @@
-import {getRandomIntegerNumber, getRandomArrayItem} from '../utils';
+import {getRandomIntegerNumber, getRandomArrayItem} from '../utils/utils';
 
 const TITLES = [
   `The Irishman`,
