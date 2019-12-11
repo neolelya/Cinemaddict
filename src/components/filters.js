@@ -1,4 +1,4 @@
-import {createElement} from '../utils';
+import AbstractComponent from './abstract-component';
 
 const createFiltersTemplate = (data) => {
   return (
@@ -12,25 +12,13 @@ const createFiltersTemplate = (data) => {
   );
 };
 
-export default class MenuFilters {
+export default class MenuFilters extends AbstractComponent {
   constructor(data) {
-    this._element = null;
+    super();
     this._data = data;
   }
 
   getTemplate() {
     return createFiltersTemplate(this._data);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
