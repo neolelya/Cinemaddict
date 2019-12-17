@@ -9,7 +9,10 @@ export default class AbstractSmartComponent extends AbstractComponent {
     this.getElement().remove();
     this.removeElement();
 
-    document.body.appendChild(this.getElement());
+    const newElement = this.getElement();
+    newElement.style.animation = `none`;
+
+    document.body.appendChild(newElement);
 
     this.recoveryListeners();
   }

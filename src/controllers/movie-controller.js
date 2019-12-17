@@ -60,6 +60,7 @@ export default class MovieController {
   _openPopup() {
     this._onViewChange();
 
+    document.body.classList.add(`hide-overflow`);
     document.body.appendChild(this._filmDetailsComponent.getElement());
     document.addEventListener(`keydown`, this._onEscKeydown);
 
@@ -69,6 +70,7 @@ export default class MovieController {
   }
 
   _closePopup() {
+    document.body.classList.remove(`hide-overflow`);
     document.body.removeChild(this._filmDetailsComponent.getElement());
     document.removeEventListener(`keydown`, this._onEscKeydown);
 

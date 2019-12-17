@@ -25,7 +25,7 @@ const createFilmTemplate = ({
           <span class="film-card__genre">${Array.from(genres)[0]}</span>
         </p>
         <img src="${poster}" alt="" class="film-card__poster">
-        <p class="film-card__description">${description.length <= DESCRIPTION_LENGTH ? description : description.substr(0, DESCRIPTION_LENGTH) + `...`}</p>
+        <p class="film-card__description">${description.length <= DESCRIPTION_LENGTH ? description : `${description.substr(0, DESCRIPTION_LENGTH)}...`}</p>
         <a class="film-card__comments">
             ${comments.length} comment${comments.length > 1 ? `s` : ``}
         </a>

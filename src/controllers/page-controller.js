@@ -9,6 +9,7 @@ import MovieController from './movie-controller';
 
 const SHOWING_FILMS_ON_START = 5;
 const ADDED_FILMS_BY_BUTTON = 5;
+const EXTRA_FILMS_QUANTITY = 2;
 
 export default class PageController {
   constructor(container) {
@@ -43,12 +44,12 @@ export default class PageController {
     this._topRatedFilms = [...films]
       .filter((film) => film.rating > 0)
       .sort((first, second) => second.rating - first.rating)
-      .slice(0, 2);
+      .slice(0, EXTRA_FILMS_QUANTITY);
 
     this._mostCommentedFilms = [...films]
       .filter((film) => film.comments.length > 0)
       .sort((first, second) => second.comments.length - first.comments.length)
-      .slice(0, 2);
+      .slice(0, EXTRA_FILMS_QUANTITY);
 
     if (this._mostCommentedFilms.length > 0) {
       render(filmsList.getElement(), new ExtraFilmsComponent(`Most commented`), RenderPosition.AFTER);
