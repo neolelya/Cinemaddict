@@ -1,20 +1,11 @@
 import AbstractSmartComponent from './abstract-smart-component';
+import {formatDate, formatTime, formatCommentDate} from '../utils/utils';
 
 const createGenreTemplate = (genres) => {
   return Array.from(genres).map((genre) => `<span class="film-details__genre">${genre}</span>`).join(``);
 };
 
 const createCommentsTemplate = (comments) => {
-  const options = {
-    day: `numeric`,
-    month: `long`,
-    year: `numeric`,
-    hour: `numeric`,
-    minute: `numeric`
-  };
-
-  let dateTimeFormatter = new Intl.DateTimeFormat(`en-GB`, options);
-
   return Array.from(comments)
     .map((comment) => (`<li class="film-details__comment">
                             <span class="film-details__comment-emoji">
@@ -24,7 +15,7 @@ const createCommentsTemplate = (comments) => {
                                 <p class="film-details__comment-text">${comment.comment}</p>
                                 <p class="film-details__comment-info">
                                     <span class="film-details__comment-author">${comment.userName}</span>
-                                    <span class="film-details__comment-day">${dateTimeFormatter.format(comment.date)}</span>
+                                    <span class="film-details__comment-day">${formatCommentDate(comment.date)}</span>
                                     <button class="film-details__comment-delete">Delete</button>
                                 </p>
                             </div>
@@ -76,11 +67,11 @@ const createFilmDetailsTemplate = (film, options = {}) => {
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Release Date</td>
-                  <td class="film-details__cell">${releaseDate}</td>
+                  <td class="film-details__cell">${formatDate(releaseDate)}</td>
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Runtime</td>
-                  <td class="film-details__cell">${duration}</td>
+                  <td class="film-details__cell">${formatTime(duration)}</td>
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Country</td>

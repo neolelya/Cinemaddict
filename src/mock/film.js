@@ -72,13 +72,7 @@ const getRandomDescription = () => {
 };
 
 const getRandomDuration = () => {
-  const randomDuration = getRandomIntegerNumber(0, 300);
-  const durationHours = Math.floor(randomDuration / 60);
-  const durationMinutes = randomDuration % 60;
-
-  return (
-    `${durationHours}h ${durationMinutes}m`
-  );
+  return getRandomIntegerNumber(3600000, 18000000);
 };
 
 const getRandomActors = () => {
@@ -91,14 +85,8 @@ const getRandomActors = () => {
 const getRandomDate = () => {
   const startDate = new Date(1950, 0, 1);
   const endDate = new Date();
-  const options = {
-    day: `numeric`,
-    month: `long`,
-    year: `numeric`
-  };
 
-  return new Intl.DateTimeFormat(`en-GB`, options)
-    .format(new Date(startDate.getTime() + Math.random() * (endDate.getTime() - startDate.getTime())));
+  return new Date(startDate.getTime() + Math.random() * (endDate.getTime() - startDate.getTime()));
 };
 
 const getRandomCommentDate = () => {
@@ -118,7 +106,6 @@ const generateFilm = () => {
   return {
     title: getRandomArrayItem(TITLES),
     rating: `${getRandomIntegerNumber(5, 9)}.${getRandomIntegerNumber(0, 9)}`,
-    year: getRandomIntegerNumber(1960, 2019),
     duration: getRandomDuration(),
     poster: getRandomArrayItem(POSTERS),
     description: getRandomDescription(),
