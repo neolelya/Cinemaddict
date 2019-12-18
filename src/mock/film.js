@@ -120,7 +120,6 @@ const generateFilm = () => {
     rating: `${getRandomIntegerNumber(5, 9)}.${getRandomIntegerNumber(0, 9)}`,
     year: getRandomIntegerNumber(1960, 2019),
     duration: getRandomDuration(),
-    genre: getRandomArrayItem(GENRES),
     poster: getRandomArrayItem(POSTERS),
     description: getRandomDescription(),
     comments: generateComments(getRandomIntegerNumber(0, 20)),

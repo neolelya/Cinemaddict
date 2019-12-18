@@ -1,4 +1,4 @@
-import AbstractComponent from './abstract-component';
+import AbstractSmartComponent from './abstract-smart-component';
 
 const createGenreTemplate = (genres) => {
   return Array.from(genres).map((genre) => `<span class="film-details__genre">${genre}</span>`).join(``);
@@ -32,7 +32,10 @@ const createCommentsTemplate = (comments) => {
     .join(``);
 };
 
-const createFilmDetailsTemplate = ({poster, age, title, rating, director, writer, actors, releaseDate, duration, country, genres, description, comments}) => {
+const createFilmDetailsTemplate = (film, options = {}) => {
+  const {poster, age, title, rating, director, writer, actors, releaseDate, duration, country, genres, description, comments} = film;
+  const {isWatchlist, isHistory, isFavorites} = options;
+
   return (
     `<section class="film-details">
       <form class="film-details__inner" action="" method="get">
@@ -96,17 +99,69 @@ const createFilmDetailsTemplate = ({poster, age, title, rating, director, writer
           </div>
 
           <section class="film-details__controls">
-            <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist">
+            <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist" ${isWatchlist ? `checked` : ``}>
             <label for="watchlist" class="film-details__control-label film-details__control-label--watchlist">Add to watchlist</label>
 
-            <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched">
+            <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched" ${isHistory ? `checked` : ``}>
             <label for="watched" class="film-details__control-label film-details__control-label--watched">Already watched</label>
 
-            <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite">
+            <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite" ${isFavorites ? `checked` : ``}>
             <label for="favorite" class="film-details__control-label film-details__control-label--favorite">Add to favorites</label>
           </section>
         </div>
 
+        ${isHistory ?
+      `<div class="form-details__middle-container">
+            <section class="film-details__user-rating-wrap">
+                <div class="film-details__user-rating-controls">
+                    <button class="film-details__watched-reset" type="button">Undo</button>
+                </div>
+    
+                <div class="film-details__user-score">
+                    <div class="film-details__user-rating-poster">
+                        <img src="${poster}" alt="film-poster" class="film-details__user-rating-img">
+                    </div>
+    
+                    <section class="film-details__user-rating-inner">
+                        <h3 class="film-details__user-rating-title">The Great Flamarion</h3>
+    
+                        <p class="film-details__user-rating-feelings">How you feel it?</p>
+    
+                        <div class="film-details__user-rating-score">
+                            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="1" id="rating-1">
+                            <label class="film-details__user-rating-label" for="rating-1">1</label>
+    
+                            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="2" id="rating-2">
+                            <label class="film-details__user-rating-label" for="rating-2">2</label>
+                  
+                            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="3" id="rating-3">
+                            <label class="film-details__user-rating-label" for="rating-3">3</label>
+                  
+                            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="4" id="rating-4">
+                            <label class="film-details__user-rating-label" for="rating-4">4</label>
+                  
+                            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="5" id="rating-5">
+                            <label class="film-details__user-rating-label" for="rating-5">5</label>
+                  
+                            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="6" id="rating-6">
+                            <label class="film-details__user-rating-label" for="rating-6">6</label>
+                  
+                            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="7" id="rating-7">
+                            <label class="film-details__user-rating-label" for="rating-7">7</label>
+                  
+                            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="8" id="rating-8">
+                            <label class="film-details__user-rating-label" for="rating-8">8</label>
+                  
+                            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="9" id="rating-9" checked>
+                            <label class="film-details__user-rating-label" for="rating-9">9</label>
+    
+                        </div>
+                    </section>
+                </div>
+            </section>
+         </div>`
+      : ``}
+        
         <div class="form-details__bottom-container">
           <section class="film-details__comments-wrap">
             <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count"></span></h3>
@@ -151,13 +206,62 @@ const createFilmDetailsTemplate = ({poster, age, title, rating, director, writer
   );
 };
 
-export default class FilmDetails extends AbstractComponent {
+export default class FilmDetails extends AbstractSmartComponent {
   constructor(film) {
     super();
+
     this._film = film;
+    this._isWatchlist = !!film.isWatchlist;
+    this._isHistory = !!film.isHistory;
+    this._isFavorites = !!film.isFavorites;
+    this._subscribeOnEvents();
   }
 
   getTemplate() {
-    return createFilmDetailsTemplate(this._film);
+    return createFilmDetailsTemplate(this._film, {
+      isWatchlist: this._isWatchlist,
+      isHistory: this._isHistory,
+      isFavorites: this._isFavorites
+    });
+  }
+
+  setClosePopupClickHandler(handler) {
+    this._closePopupClickHandler = handler;
+    this._setClosePopupClickHandler();
+  }
+
+  _setClosePopupClickHandler() {
+    this.getElement()
+      .querySelector(`.film-details__close-btn`)
+      .addEventListener(`click`, this._closePopupClickHandler);
+  }
+
+  _subscribeOnEvents() {
+    const element = this.getElement();
+
+    this._setClosePopupClickHandler();
+
+    element.querySelector(`#watchlist`).addEventListener(`click`, () => {
+      this._isWatchlist = !this._isWatchlist;
+      this.rerender();
+    });
+
+    element.querySelector(`#watched`).addEventListener(`click`, () => {
+      this._isHistory = !this._isHistory;
+      this.rerender();
+    });
+
+    element.querySelector(`#favorite`).addEventListener(`click`, () => {
+      this._isFavorites = !this._isFavorites;
+      this.rerender();
+    });
+  }
+
+  recoveryListeners() {
+    this._subscribeOnEvents();
+  }
+
+  rerender() {
+    super.rerender();
   }
 }
