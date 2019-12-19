@@ -1,11 +1,12 @@
 import AbstractComponent from './abstract-component';
+import {formatTime, formatYear} from '../utils/utils';
 
 const DESCRIPTION_LENGTH = 139;
 
 const createFilmTemplate = ({
   title,
   rating,
-  year,
+  releaseDate,
   duration,
   genres,
   poster,
@@ -20,8 +21,8 @@ const createFilmTemplate = ({
         <h3 class="film-card__title">${title}</h3>
         <p class="film-card__rating">${rating}</p>
         <p class="film-card__info">
-          <span class="film-card__year">${year}</span>
-          <span class="film-card__duration">${duration}</span>
+          <span class="film-card__year">${formatYear(releaseDate)}</span>
+          <span class="film-card__duration">${formatTime(duration)}</span>
           <span class="film-card__genre">${Array.from(genres)[0]}</span>
         </p>
         <img src="${poster}" alt="" class="film-card__poster">
