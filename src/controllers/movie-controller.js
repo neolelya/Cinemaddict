@@ -23,7 +23,8 @@ export default class MovieController {
   }
 
   render(film) {
-    const oldFilmComponent = this._filmComponent ? this._filmComponent : null;
+    const oldFilmComponent = this._filmComponent;
+    const oldFilmDetailsComponent = this._filmDetailsComponent;
 
     this._filmComponent = new FilmComponent(film);
     this._filmDetailsComponent = new FilmDetailsComponent(film);
@@ -50,10 +51,46 @@ export default class MovieController {
       }));
     });
 
+    this._filmDetailsComponent.setWatchlistClickHandler(() => {
+      this._onDataChange(film, Object.assign({}, film, {
+        isWatchlist: !film.isWatchlist,
+      }));
+    });
+
+    this._filmDetailsComponent.setAlreadyWatchedClickHandler(() => {
+      this._onDataChange(film, Object.assign({}, film, {
+        isHistory: !film.isHistory,
+      }));
+    });
+
+    this._filmDetailsComponent.setFavoriteClickHandler(() => {
+      this._onDataChange(film, Object.assign({}, film, {
+        isFavorites: !film.isFavorites,
+      }));
+    });
+
+    this._filmDetailsComponent.setDeleteCommentHandler((index) => {
+      this._onDataChange(film, Object.assign({}, film, {
+        comments: [].concat(film.comments.slice(0, index), film.comments.slice(index + 1))
+      }));
+    });
+
+    this._filmDetailsComponent.setClosePopupClickHandler(this._closePopup);
+    this._filmDetailsComponent.setCommentHandler((newComment) => {
+      this._onDataChange(film, Object.assign({}, film, {
+        comments: [].concat(film.comments, newComment)
+      }));
+    });
+
     if (oldFilmComponent) {
       replace(this._filmComponent, oldFilmComponent);
     } else {
       render(this._container, this._filmComponent, RenderPosition.BEFOREEND);
+    }
+
+    if (oldFilmDetailsComponent && this._mode === Mode.DETAILS) {
+      this._filmDetailsComponent.disableAnimation();
+      replace(this._filmDetailsComponent, oldFilmDetailsComponent);
     }
   }
 
@@ -64,8 +101,6 @@ export default class MovieController {
     document.body.appendChild(this._filmDetailsComponent.getElement());
     document.addEventListener(`keydown`, this._onEscKeydown);
 
-    this._filmDetailsComponent.setClosePopupClickHandler(this._closePopup);
-
     this._mode = Mode.DETAILS;
   }
 
@@ -73,6 +108,8 @@ export default class MovieController {
     document.body.classList.remove(`hide-overflow`);
     document.body.removeChild(this._filmDetailsComponent.getElement());
     document.removeEventListener(`keydown`, this._onEscKeydown);
+
+    this._filmDetailsComponent.enableAnimation();
 
     this._mode = Mode.DEFAULT;
   }
