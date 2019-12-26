@@ -1,5 +1,6 @@
-import AbstractSmartComponent from './abstract-smart-component';
-import {formatDate, formatTime, formatCommentDate} from '../utils/utils';
+import {formatDate, formatTime, formatCommentDate, getRandomArrayItem} from '../utils/utils';
+import AbstractComponent from './abstract-component';
+import {PEOPLES} from '../mock/film';
 
 const createGenreTemplate = (genres) => {
   return Array.from(genres).map((genre) => `<span class="film-details__genre">${genre}</span>`).join(``);
@@ -12,7 +13,7 @@ const createCommentsTemplate = (comments) => {
                                 <img src="${comment.emoji}" width="55" height="55" alt="emoji">
                             </span>
                             <div>
-                                <p class="film-details__comment-text">${comment.comment}</p>
+                                <p class="film-details__comment-text">${comment.comment.replace(/</g, `&lt`)}</p>
                                 <p class="film-details__comment-info">
                                     <span class="film-details__comment-author">${comment.userName}</span>
                                     <span class="film-details__comment-day">${formatCommentDate(comment.date)}</span>
@@ -197,7 +198,7 @@ const createFilmDetailsTemplate = (film, options = {}) => {
   );
 };
 
-export default class FilmDetails extends AbstractSmartComponent {
+export default class FilmDetails extends AbstractComponent {
   constructor(film) {
     super();
 
@@ -205,7 +206,7 @@ export default class FilmDetails extends AbstractSmartComponent {
     this._isWatchlist = !!film.isWatchlist;
     this._isHistory = !!film.isHistory;
     this._isFavorites = !!film.isFavorites;
-    this._subscribeOnEvents();
+    this._setEmojiHandler();
   }
 
   getTemplate() {
@@ -217,42 +218,80 @@ export default class FilmDetails extends AbstractSmartComponent {
   }
 
   setClosePopupClickHandler(handler) {
-    this._closePopupClickHandler = handler;
-    this._setClosePopupClickHandler();
-  }
-
-  _setClosePopupClickHandler() {
     this.getElement()
       .querySelector(`.film-details__close-btn`)
-      .addEventListener(`click`, this._closePopupClickHandler);
+      .addEventListener(`click`, handler);
   }
 
-  _subscribeOnEvents() {
-    const element = this.getElement();
-
-    this._setClosePopupClickHandler();
-
-    element.querySelector(`#watchlist`).addEventListener(`click`, () => {
-      this._isWatchlist = !this._isWatchlist;
-      this.rerender();
-    });
-
-    element.querySelector(`#watched`).addEventListener(`click`, () => {
-      this._isHistory = !this._isHistory;
-      this.rerender();
-    });
-
-    element.querySelector(`#favorite`).addEventListener(`click`, () => {
-      this._isFavorites = !this._isFavorites;
-      this.rerender();
-    });
+  setWatchlistClickHandler(handler) {
+    this.getElement()
+      .querySelector(`#watchlist`)
+      .addEventListener(`click`, handler);
   }
 
-  recoveryListeners() {
-    this._subscribeOnEvents();
+  setAlreadyWatchedClickHandler(handler) {
+    this.getElement()
+      .querySelector(`#watched`)
+      .addEventListener(`click`, handler);
   }
 
-  rerender() {
-    super.rerender();
+  setFavoriteClickHandler(handler) {
+    this.getElement()
+      .querySelector(`#favorite`)
+      .addEventListener(`click`, handler);
+  }
+
+  disableAnimation() {
+    this.getElement().style.animation = `none`;
+  }
+
+  enableAnimation() {
+    this.getElement().removeAttribute(`style`);
+  }
+
+  setDeleteCommentHandler(handler) {
+    this.getElement()
+      .querySelector(`.film-details__comments-list`)
+      .addEventListener(`click`, (evt) => {
+        if (evt.target.tagName !== `BUTTON`) {
+          return;
+        }
+
+        evt.preventDefault();
+        const listItem = evt.target.closest(`li`);
+        const index = Array.from(listItem.parentElement.children).indexOf(listItem);
+
+        handler(index);
+      });
+  }
+
+  _setEmojiHandler() {
+    const regExp = /^https?:\/\/[^/]+/;
+    const emojies = this.getElement().querySelectorAll(`.film-details__emoji-label`);
+    emojies.forEach((element) => element.addEventListener(`click`, (evt) => {
+      this.getElement()
+        .querySelector(`.film-details__add-emoji-label`)
+        .innerHTML = evt.target.outerHTML;
+      this._selectedEmoji = evt.target.src.replace(regExp, ``);
+    }));
+  }
+
+  setCommentHandler(handler) {
+    const commentInput = this.getElement().querySelector(`.film-details__comment-input`);
+
+    commentInput.addEventListener(`keydown`, (evt) => {
+      const ctrlKeyPressed = evt.ctrlKey;
+      const isEnterKey = evt.key === `Enter`;
+
+      if (ctrlKeyPressed && isEnterKey && this._selectedEmoji) {
+        const newComment = {
+          emoji: this._selectedEmoji,
+          comment: commentInput.value,
+          userName: getRandomArrayItem(PEOPLES),
+          date: new Date()
+        };
+        handler(newComment);
+      }
+    });
   }
 }

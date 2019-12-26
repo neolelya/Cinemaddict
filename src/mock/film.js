@@ -41,7 +41,7 @@ const DESCRIPTIONS = [
   `In rutrum ac purus sit amet tempus.`
 ];
 
-const PEOPLES = [
+export const PEOPLES = [
   `Anthony Mann`,
   `Heinz Herald`,
   `Anne Wigton`,
@@ -102,8 +102,9 @@ const getRandomGenres = (genres) => {
     .slice(0, 3);
 };
 
-const generateFilm = () => {
+const generateFilm = (id) => {
   return {
+    id,
     title: getRandomArrayItem(TITLES),
     rating: `${getRandomIntegerNumber(5, 9)}.${getRandomIntegerNumber(0, 9)}`,
     duration: getRandomDuration(),
@@ -144,7 +145,7 @@ const generateComments = (quantity) => {
 const generateFilms = (quantity) => {
   return new Array(quantity)
     .fill(``)
-    .map(() => generateFilm());
+    .map((_, index) => generateFilm(index + 1));
 };
 
 export {generateFilm, generateFilms, generateComments};
