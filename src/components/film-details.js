@@ -25,7 +25,25 @@ const createCommentsTemplate = (comments) => {
 };
 
 const createFilmDetailsTemplate = (film, options = {}) => {
-  const {poster, age, title, rating, director, writer, actors, releaseDate, duration, country, genres, description, comments} = film;
+  const {
+    comments,
+    filmInfo: {
+      title,
+      alternativeTitle,
+      totalRating,
+      poster,
+      ageRating,
+      director,
+      writer,
+      actors,
+      release: {
+        date,
+        releaseCountry
+      },
+      runtime,
+      genres,
+      description,
+    }} = film;
   const {isWatchlist, isHistory, isFavorites} = options;
 
   return (
@@ -38,18 +56,18 @@ const createFilmDetailsTemplate = (film, options = {}) => {
           <div class="film-details__info-wrap">
             <div class="film-details__poster">
               <img class="film-details__poster-img" src="${poster}" alt="">
-              <p class="film-details__age">${age}</p>
+              <p class="film-details__age">${ageRating}</p>
             </div>
 
             <div class="film-details__info">
               <div class="film-details__info-head">
                 <div class="film-details__title-wrap">
                   <h3 class="film-details__title">${title}</h3>
-                  <p class="film-details__title-original">Original: ${title}</p>
+                  <p class="film-details__title-original">Original: ${alternativeTitle}</p>
                 </div>
 
                 <div class="film-details__rating">
-                  <p class="film-details__total-rating">${rating}</p>
+                  <p class="film-details__total-rating">${totalRating}</p>
                 </div>
               </div>
 
@@ -68,15 +86,15 @@ const createFilmDetailsTemplate = (film, options = {}) => {
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Release Date</td>
-                  <td class="film-details__cell">${formatDate(releaseDate)}</td>
+                  <td class="film-details__cell">${formatDate(date)}</td>
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Runtime</td>
-                  <td class="film-details__cell">${formatTime(duration)}</td>
+                  <td class="film-details__cell">${formatTime(runtime)}</td>
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Country</td>
-                  <td class="film-details__cell">${country}</td>
+                  <td class="film-details__cell">${releaseCountry}</td>
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Genre${genres.size > 1 ? `s` : ``}</td>
@@ -115,7 +133,7 @@ const createFilmDetailsTemplate = (film, options = {}) => {
                     </div>
     
                     <section class="film-details__user-rating-inner">
-                        <h3 class="film-details__user-rating-title">The Great Flamarion</h3>
+                        <h3 class="film-details__user-rating-title">${title}</h3>
     
                         <p class="film-details__user-rating-feelings">How you feel it?</p>
     

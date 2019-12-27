@@ -145,4 +145,12 @@ export default class PageController {
     this._displayedFilms = this._filmsModel.getMovies();
     this.renderFilms();
   }
+
+  show() {
+    this._container.show();
+  }
+
+  hide() {
+    this._container.hide();
+  }
 }

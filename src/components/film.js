@@ -4,25 +4,31 @@ import {formatTime, formatYear} from '../utils/utils';
 const DESCRIPTION_LENGTH = 139;
 
 const createFilmTemplate = ({
-  title,
-  rating,
-  releaseDate,
-  duration,
-  genres,
-  poster,
-  description,
   comments,
-  isWatchlist,
-  isHistory,
-  isFavorites,
+  filmInfo: {
+    title,
+    totalRating,
+    poster,
+    release: {
+      date,
+    },
+    runtime,
+    genres,
+    description,
+  },
+  userDetails: {
+    isWatchlist,
+    isHistory,
+    isFavorites,
+  }
 }) =>
   (
     `<article class="film-card">
         <h3 class="film-card__title">${title}</h3>
-        <p class="film-card__rating">${rating}</p>
+        <p class="film-card__rating">${totalRating}</p>
         <p class="film-card__info">
-          <span class="film-card__year">${formatYear(releaseDate)}</span>
-          <span class="film-card__duration">${formatTime(duration)}</span>
+          <span class="film-card__year">${formatYear(date)}</span>
+          <span class="film-card__duration">${formatTime(runtime)}</span>
           <span class="film-card__genre">${Array.from(genres)[0]}</span>
         </p>
         <img src="${poster}" alt="" class="film-card__poster">
