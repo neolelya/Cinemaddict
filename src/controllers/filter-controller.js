@@ -5,6 +5,7 @@ export default class FilterController {
   constructor(container, movies) {
     this._container = container;
     this._movies = movies;
+
     this._filters = null;
     this._activeItem = MenuType.FILTER;
 
