@@ -6,14 +6,14 @@ export default class FilterController {
     this._container = container;
     this._movies = movies;
     this._filters = null;
-    this._isStatsActive = false;
+    this._activeItem = MenuType.FILTER;
 
     movies.onMoviesUpdate(() => this.render());
   }
 
   render() {
     const oldComponent = this._filters;
-    this._filters = new MenuFilters(this._movies.getFilter(), this._isStatsActive);
+    this._filters = new MenuFilters(this._movies.getFilter(), this._activeItem);
     this._filters.setActiveFilterClickHandler((filterName) => {
       this._movies.setFilter(filterName);
       this.render();
@@ -34,7 +34,7 @@ export default class FilterController {
 
       const menuType = evt.target.dataset.menuType;
 
-      this._isStatsActive = menuType === MenuType.STATS;
+      this._activeItem = menuType;
 
       this.render();
 

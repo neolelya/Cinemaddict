@@ -125,7 +125,7 @@ const generateFilm = (id) => {
       description: getRandomDescription(),
     },
     userDetails: {
-      personalRating: getRandomIntegerNumber(0, 100),
+      personalRating: isHistory ? getRandomIntegerNumber(1, 9) : ``,
       isWatchlist: Math.random() > 0.5,
       isHistory,
       watchingDate: isHistory ? getRandomDate(new Date(2015, 0, 1)) : `Not watched`,

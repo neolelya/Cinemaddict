@@ -121,7 +121,7 @@ export default class Movies {
     this._moviesUpdateHandler = handler;
   }
 
-  _getMoviesNumber(movies) {
+  getMoviesNumber(movies) {
     return movies
       .filter((movie) => movie.userDetails.isHistory)
       .length;
@@ -156,7 +156,7 @@ export default class Movies {
     const moviesFromPeriod = this._movies.filter((movie) => movie.userDetails.watchingDate > period);
 
     return {
-      moviesNumber: this._getMoviesNumber(moviesFromPeriod),
+      moviesNumber: this.getMoviesNumber(moviesFromPeriod),
       duration: this._getMoviesDuration(moviesFromPeriod),
       genres: this._getMoviesGenres(moviesFromPeriod)
     };

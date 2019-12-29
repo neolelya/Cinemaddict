@@ -1,7 +1,7 @@
-export const getProfileRating = (watchedFilmsNumber) => {
+export const getProfileRank = (watchedFilmsNumber) => {
   switch (true) {
     case (watchedFilmsNumber === 0):
-      return ` `;
+      return ``;
     case (watchedFilmsNumber >= 1 && watchedFilmsNumber < 11):
       return `Novice`;
     case (watchedFilmsNumber >= 11 && watchedFilmsNumber < 21):

@@ -6,19 +6,20 @@ import {render, RenderPosition} from './utils/render';
 import Movies from './models/movies';
 import FilterController from './controllers/filter-controller';
 import {MenuType} from './components/filters';
-import {getProfileRating} from './models/profile';
+import {getProfileRank} from './models/profile';
 import StatisticsController from './controllers/statistics-controller';
 
 const FILMS_COUNT = 23;
 
 const moviesModel = new Movies();
 moviesModel.setMovies(generateFilms(FILMS_COUNT));
-const watchedFilmsQuantity = moviesModel.getMovies()[0].userDetails.personalRating;
+
+const WATCHED_FILMS_QUANTITY = moviesModel.getMoviesNumber(moviesModel.getMovies());
 
 const siteMainElement = document.querySelector(`.main`);
 const siteHeaderElement = document.querySelector(`.header`);
 
-render(siteHeaderElement, new UserProfileComponent(getProfileRating(watchedFilmsQuantity)), RenderPosition.BEFOREEND);
+render(siteHeaderElement, new UserProfileComponent(getProfileRank(WATCHED_FILMS_QUANTITY)), RenderPosition.BEFOREEND);
 
 const filters = new FilterController(siteMainElement, moviesModel);
 filters.render();
@@ -28,7 +29,7 @@ render(siteMainElement, filmsComponent, RenderPosition.BEFOREEND);
 
 const pageController = new PageController(filmsComponent, moviesModel);
 
-const statisticsController = new StatisticsController(siteMainElement, moviesModel, watchedFilmsQuantity);
+const statisticsController = new StatisticsController(siteMainElement, moviesModel, WATCHED_FILMS_QUANTITY);
 statisticsController.render();
 
 statisticsController.hide();
