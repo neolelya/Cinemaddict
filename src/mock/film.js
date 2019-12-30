@@ -82,8 +82,7 @@ const getRandomActors = () => {
     .join(` `);
 };
 
-const getRandomDate = () => {
-  const startDate = new Date(1950, 0, 1);
+const getRandomDate = (startDate) => {
   const endDate = new Date();
 
   return new Date(startDate.getTime() + Math.random() * (endDate.getTime() - startDate.getTime()));
@@ -103,24 +102,35 @@ const getRandomGenres = (genres) => {
 };
 
 const generateFilm = (id) => {
+  const isHistory = Math.random() > 0.5;
+
   return {
     id,
-    title: getRandomArrayItem(TITLES),
-    rating: `${getRandomIntegerNumber(5, 9)}.${getRandomIntegerNumber(0, 9)}`,
-    duration: getRandomDuration(),
-    poster: getRandomArrayItem(POSTERS),
-    description: getRandomDescription(),
     comments: generateComments(getRandomIntegerNumber(0, 20)),
-    director: getRandomArrayItem(PEOPLES),
-    writer: getRandomArrayItem(PEOPLES),
-    actors: getRandomActors(),
-    releaseDate: getRandomDate(),
-    country: getRandomArrayItem(COUNTRIES),
-    genres: new Set(getRandomGenres(GENRES)),
-    age: getRandomArrayItem(AGES),
-    isWatchlist: Math.random() > 0.5,
-    isHistory: Math.random() > 0.5,
-    isFavorites: Math.random() > 0.5,
+    filmInfo: {
+      title: getRandomArrayItem(TITLES),
+      alternativeTitle: getRandomArrayItem(TITLES),
+      totalRating: `${getRandomIntegerNumber(5, 9)}.${getRandomIntegerNumber(0, 9)}`,
+      poster: getRandomArrayItem(POSTERS),
+      ageRating: getRandomArrayItem(AGES),
+      director: getRandomArrayItem(PEOPLES),
+      writer: getRandomArrayItem(PEOPLES),
+      actors: getRandomActors(),
+      release: {
+        date: getRandomDate(new Date(1950, 0, 1)),
+        releaseCountry: getRandomArrayItem(COUNTRIES),
+      },
+      runtime: getRandomDuration(),
+      genres: new Set(getRandomGenres(GENRES)),
+      description: getRandomDescription(),
+    },
+    userDetails: {
+      personalRating: isHistory ? getRandomIntegerNumber(1, 9) : ``,
+      isWatchlist: Math.random() > 0.5,
+      isHistory,
+      watchingDate: isHistory ? getRandomDate(new Date(2015, 0, 1)) : `Not watched`,
+      isFavorites: Math.random() > 0.5,
+    },
   };
 };
 

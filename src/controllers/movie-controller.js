@@ -35,37 +35,49 @@ export default class MovieController {
 
     this._filmComponent.setWatchlistClickHandler(() => {
       this._onDataChange(film, Object.assign({}, film, {
-        isWatchlist: !film.isWatchlist,
+        userDetails: Object.assign({}, film.userDetails, {
+          isWatchlist: !film.userDetails.isWatchlist,
+        })
       }));
     });
 
     this._filmComponent.setAlreadyWatchedClickHandler(() => {
       this._onDataChange(film, Object.assign({}, film, {
-        isHistory: !film.isHistory,
+        userDetails: Object.assign({}, film.userDetails, {
+          isHistory: !film.userDetails.isHistory,
+        })
       }));
     });
 
     this._filmComponent.setFavoriteClickHandler(() => {
       this._onDataChange(film, Object.assign({}, film, {
-        isFavorites: !film.isFavorites,
+        userDetails: Object.assign({}, film.userDetails, {
+          isFavorites: !film.userDetails.isFavorites,
+        })
       }));
     });
 
     this._filmDetailsComponent.setWatchlistClickHandler(() => {
       this._onDataChange(film, Object.assign({}, film, {
-        isWatchlist: !film.isWatchlist,
+        userDetails: Object.assign({}, film.userDetails, {
+          isWatchlist: !film.userDetails.isWatchlist,
+        })
       }));
     });
 
     this._filmDetailsComponent.setAlreadyWatchedClickHandler(() => {
       this._onDataChange(film, Object.assign({}, film, {
-        isHistory: !film.isHistory,
+        userDetails: Object.assign({}, film.userDetails, {
+          isHistory: !film.userDetails.isHistory,
+        })
       }));
     });
 
     this._filmDetailsComponent.setFavoriteClickHandler(() => {
       this._onDataChange(film, Object.assign({}, film, {
-        isFavorites: !film.isFavorites,
+        userDetails: Object.assign({}, film.userDetails, {
+          isFavorites: !film.userDetails.isFavorites,
+        })
       }));
     });
 
