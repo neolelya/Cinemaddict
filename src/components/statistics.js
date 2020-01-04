@@ -1,5 +1,4 @@
 import AbstractSmartComponent from './abstract-smart-component';
-import moment from 'moment';
 import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import {Period} from '../models/movies';
@@ -77,8 +76,8 @@ const renderGenresChart = (genresCtx, movies) => {
 };
 
 const createStatisticsTemplate = ({moviesNumber, duration, genres}, profileRank) => {
-  const hours = moment.utc(duration).get(`hour`);
-  const minutes = moment.utc(duration).get(`minutes`);
+  const hours = Math.floor(duration / 60);
+  const minutes = duration % hours;
 
   return (
     `<section class="statistic">

@@ -29,13 +29,13 @@ export default class Movies {
     let movies;
     switch (this._activeFilter) {
       case FilterName.WATCHLIST:
-        movies = this._movies.filter((it) => it.userDetails.isWatchlist);
+        movies = this._movies.filter((it) => it.isWatchlist);
         break;
       case FilterName.HISTORY:
-        movies = this._movies.filter((it) => it.userDetails.isHistory);
+        movies = this._movies.filter((it) => it.isHistory);
         break;
       case FilterName.FAVORITES:
-        movies = this._movies.filter((it) => it.userDetails.isFavorites);
+        movies = this._movies.filter((it) => it.isFavorites);
         break;
       case FilterName.ALL:
       default:
@@ -45,10 +45,10 @@ export default class Movies {
 
     switch (this._activeSortType) {
       case SortType.RATING:
-        [...movies].sort((a, b) => b.filmInfo.totalRating - a.filmInfo.totalRating);
+        movies = [...movies].sort((a, b) => b.totalRating - a.totalRating);
         break;
       case SortType.DATE:
-        [...movies].sort((a, b) => b.filmInfo.release.date - a.filmInfo.release.date);
+        movies = [...movies].sort((a, b) => new Date(b.releaseDate) - new Date(a.releaseDate));
         break;
     }
 
@@ -64,7 +64,7 @@ export default class Movies {
     for (const filterName of Object.values(FilterName)) {
       filters[filterName] = {
         name: filterName,
-        count: this._movies.filter((film) => film.userDetails[`is${filterName[0].toUpperCase()}${filterName.slice(1)}`]).length,
+        count: this._movies.filter((film) => film[`is${filterName[0].toUpperCase()}${filterName.slice(1)}`]).length,
         isActive: this._activeFilter === filterName,
       };
     }
@@ -85,8 +85,8 @@ export default class Movies {
 
   getTopRatedMovies() {
     return this._movies
-      .filter((movie) => movie.filmInfo.totalRating > 0)
-      .sort((first, second) => second.filmInfo.totalRating - first.filmInfo.totalRating)
+      .filter((movie) => movie.totalRating > 0)
+      .sort((first, second) => second.totalRating - first.totalRating)
       .slice(0, EXTRA_FILMS_QUANTITY);
   }
 
@@ -123,15 +123,15 @@ export default class Movies {
 
   getMoviesNumber(movies) {
     return movies
-      .filter((movie) => movie.userDetails.isHistory)
+      .filter((movie) => movie.isHistory)
       .length;
   }
 
   _getMoviesDuration(movies) {
     return movies
-        .filter((movie) => movie.userDetails.isHistory)
+        .filter((movie) => movie.isHistory)
         .reduce((acc, it) => {
-          return acc + it.filmInfo.runtime;
+          return acc + it.runtime;
         }, 0);
   }
 
@@ -139,9 +139,9 @@ export default class Movies {
     const genresCounter = {};
     const genres = [];
     movies
-      .filter((movie) => movie.userDetails.isHistory)
+      .filter((movie) => movie.isHistory)
       .forEach((movie) => {
-        const genresArray = Array.from(movie.filmInfo.genres.keys());
+        const genresArray = Array.from(movie.genre.keys());
         genresArray.forEach((genre) => {
           genresCounter[genre] = (genresCounter[genre] || 0) + 1;
         });
@@ -153,7 +153,7 @@ export default class Movies {
   }
 
   getUserMoviesStats(period) {
-    const moviesFromPeriod = this._movies.filter((movie) => movie.userDetails.watchingDate > period);
+    const moviesFromPeriod = this._movies.filter((movie) => new Date(movie.watchingDate) > period);
 
     return {
       moviesNumber: this.getMoviesNumber(moviesFromPeriod),

@@ -11,9 +11,10 @@ const SHOWING_FILMS_ON_START = 5;
 const ADDED_FILMS_BY_BUTTON = 5;
 
 export default class PageController {
-  constructor(container, filmsModel) {
+  constructor(container, filmsModel, api) {
     this._container = container;
     this._filmsModel = filmsModel;
+    this._api = api;
 
     this._filmsListContainer = null;
     this._displayedFilmControllers = [];
@@ -36,7 +37,7 @@ export default class PageController {
   renderFilms() {
     this._filmsListContainer.innerHTML = ``;
     this._displayedFilmControllers = this._displayedFilms.slice(0, this._showingFilmsCount).map((film) => {
-      const filmController = new MovieController(this._filmsListContainer, this._onDataChange, this._onViewChange);
+      const filmController = new MovieController(this._filmsListContainer, this._onDataChange, this._onViewChange, this._api);
       filmController.render(film);
 
       return filmController;
@@ -125,14 +126,17 @@ export default class PageController {
   }
 
   _onDataChange(oldFilm, newFilm) {
-    this._updateFilmAndRerender(oldFilm, newFilm, this._displayedFilms, this._displayedFilmControllers);
-    this._displayedFilms = this._filmsModel.getMovies();
+    this._api.updateMovie(oldFilm.id, newFilm)
+      .then((film) => {
+        this._updateFilmAndRerender(oldFilm, film, this._displayedFilms, this._displayedFilmControllers);
+        this._displayedFilms = this._filmsModel.getMovies();
 
-    this._updateFilmAndRerender(oldFilm, newFilm, this._topRatedFilms, this._topRatedControllers);
-    this._topRatedFilms = this._filmsModel.getTopRatedMovies();
+        this._updateFilmAndRerender(oldFilm, film, this._topRatedFilms, this._topRatedControllers);
+        this._topRatedFilms = this._filmsModel.getTopRatedMovies();
 
-    this._updateFilmAndRerender(oldFilm, newFilm, this._mostCommentedFilms, this._mostCommentedControllers);
-    this._mostCommentedFilms = this._filmsModel.getMostCommentedMovies();
+        this._updateFilmAndRerender(oldFilm, film, this._mostCommentedFilms, this._mostCommentedControllers);
+        this._mostCommentedFilms = this._filmsModel.getMostCommentedMovies();
+      });
   }
 
   _onViewChange() {

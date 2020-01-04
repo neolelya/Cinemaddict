@@ -5,34 +5,28 @@ const DESCRIPTION_LENGTH = 139;
 
 const createFilmTemplate = ({
   comments,
-  filmInfo: {
-    title,
-    totalRating,
-    poster,
-    release: {
-      date,
-    },
-    runtime,
-    genres,
-    description,
-  },
-  userDetails: {
-    isWatchlist,
-    isHistory,
-    isFavorites,
-  }
+  title,
+  totalRating,
+  poster,
+  releaseDate,
+  runtime,
+  genre,
+  description,
+  isWatchlist,
+  isHistory,
+  isFavorites,
 }) =>
   (
     `<article class="film-card">
         <h3 class="film-card__title">${title}</h3>
         <p class="film-card__rating">${totalRating}</p>
         <p class="film-card__info">
-          <span class="film-card__year">${formatYear(date)}</span>
+          <span class="film-card__year">${formatYear(releaseDate)}</span>
           <span class="film-card__duration">${formatTime(runtime)}</span>
-          <span class="film-card__genre">${Array.from(genres)[0]}</span>
+          <span class="film-card__genre">${genre.size > 0 ? Array.from(genre)[0] : ``}</span>
         </p>
         <img src="${poster}" alt="" class="film-card__poster">
-        <p class="film-card__description">${description.length <= DESCRIPTION_LENGTH ? description : `${description.substr(0, DESCRIPTION_LENGTH)}...`}</p>
+        <p class="film-card__description">${description.length <= DESCRIPTION_LENGTH ? `${description.slice(0, 1).toUpperCase()}${description.slice(1)}` : `${`${description.slice(0, 1).toUpperCase()}${description.slice(1)}`.substr(0, DESCRIPTION_LENGTH)}...`}</p>
         <a class="film-card__comments">
             ${comments.length} comment${comments.length > 1 ? `s` : ``}
         </a>

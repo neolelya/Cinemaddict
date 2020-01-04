@@ -1,3 +1,4 @@
+import Movie from '../models/movie';
 import FilmComponent from '../components/film';
 import FilmDetailsComponent from '../components/film-details';
 import {render, replace, RenderPosition} from '../utils/render';
@@ -8,13 +9,16 @@ const Mode = {
 };
 
 export default class MovieController {
-  constructor(container, onDataChange, onViewChange) {
+  constructor(container, onDataChange, onViewChange, api) {
     this._container = container;
     this._onDataChange = onDataChange;
     this._onViewChange = onViewChange;
+    this._api = api;
 
     this._mode = Mode.DEFAULT;
 
+    this._movie = null;
+    this._movieComments = [];
     this._filmComponent = null;
     this._filmDetailsComponent = null;
 
@@ -22,75 +26,71 @@ export default class MovieController {
     this._onEscKeydown = this._onEscKeydown.bind(this);
   }
 
-  render(film) {
+  render(movie) {
+    this._movie = movie;
     const oldFilmComponent = this._filmComponent;
     const oldFilmDetailsComponent = this._filmDetailsComponent;
 
-    this._filmComponent = new FilmComponent(film);
-    this._filmDetailsComponent = new FilmDetailsComponent(film);
+    this._filmComponent = new FilmComponent(movie);
+    this._filmDetailsComponent = new FilmDetailsComponent(movie, this._movieComments);
 
     this._filmComponent.setDetailClickHandler(() => {
       this._openPopup();
     });
 
     this._filmComponent.setWatchlistClickHandler(() => {
-      this._onDataChange(film, Object.assign({}, film, {
-        userDetails: Object.assign({}, film.userDetails, {
-          isWatchlist: !film.userDetails.isWatchlist,
-        })
-      }));
+      const newMovie = Movie.cloneMovie(movie);
+      newMovie.isWatchlist = !newMovie.isWatchlist;
+
+      this._onDataChange(movie, newMovie);
     });
 
     this._filmComponent.setAlreadyWatchedClickHandler(() => {
-      this._onDataChange(film, Object.assign({}, film, {
-        userDetails: Object.assign({}, film.userDetails, {
-          isHistory: !film.userDetails.isHistory,
-        })
-      }));
+      const newMovie = Movie.cloneMovie(movie);
+      newMovie.isHistory = !newMovie.isHistory;
+
+      this._onDataChange(movie, newMovie);
     });
 
     this._filmComponent.setFavoriteClickHandler(() => {
-      this._onDataChange(film, Object.assign({}, film, {
-        userDetails: Object.assign({}, film.userDetails, {
-          isFavorites: !film.userDetails.isFavorites,
-        })
-      }));
+      const newMovie = Movie.cloneMovie(movie);
+      newMovie.isFavorites = !newMovie.isFavorites;
+
+      this._onDataChange(movie, newMovie);
     });
 
     this._filmDetailsComponent.setWatchlistClickHandler(() => {
-      this._onDataChange(film, Object.assign({}, film, {
-        userDetails: Object.assign({}, film.userDetails, {
-          isWatchlist: !film.userDetails.isWatchlist,
-        })
-      }));
+      const newMovie = Movie.cloneMovie(movie);
+      newMovie.isWatchlist = !newMovie.isWatchlist;
+
+      this._onDataChange(movie, newMovie);
     });
 
     this._filmDetailsComponent.setAlreadyWatchedClickHandler(() => {
-      this._onDataChange(film, Object.assign({}, film, {
-        userDetails: Object.assign({}, film.userDetails, {
-          isHistory: !film.userDetails.isHistory,
-        })
-      }));
+      const newMovie = Movie.cloneMovie(movie);
+      newMovie.isHistory = !newMovie.isHistory;
+
+      this._onDataChange(movie, newMovie);
     });
 
     this._filmDetailsComponent.setFavoriteClickHandler(() => {
-      this._onDataChange(film, Object.assign({}, film, {
-        userDetails: Object.assign({}, film.userDetails, {
-          isFavorites: !film.userDetails.isFavorites,
-        })
-      }));
+      const newMovie = Movie.cloneMovie(movie);
+      newMovie.isFavorites = !newMovie.isFavorites;
+
+      this._onDataChange(movie, newMovie);
     });
 
     this._filmDetailsComponent.setDeleteCommentHandler((index) => {
-      this._onDataChange(film, Object.assign({}, film, {
-        comments: [].concat(film.comments.slice(0, index), film.comments.slice(index + 1))
+      this._onDataChange(movie, Object.assign({}, movie, {
+        comments: [].concat(movie.comments.slice(0, index), movie.comments.slice(index + 1))
       }));
     });
 
     this._filmDetailsComponent.setClosePopupClickHandler(this._closePopup);
+
     this._filmDetailsComponent.setCommentHandler((newComment) => {
-      this._onDataChange(film, Object.assign({}, film, {
-        comments: [].concat(film.comments, newComment)
+      this._onDataChange(movie, Object.assign({}, movie, {
+        comments: [].concat(movie.comments, newComment)
       }));
     });
 
@@ -108,6 +108,12 @@ export default class MovieController {
 
   _openPopup() {
     this._onViewChange();
+
+    this._api.getComments(this._movie)
+      .then((comments) => {
+        this._movieComments = comments;
+        this.render(this._movie);
+      });
 
     document.body.classList.add(`hide-overflow`);
     document.body.appendChild(this._filmDetailsComponent.getElement());

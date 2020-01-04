@@ -1,17 +1,7 @@
 import moment from 'moment';
 
-export const getRandomIntegerNumber = (min, max) => {
-  return Math.floor(min + Math.random() * (max + 1 - min));
-};
-
-export const getRandomArrayItem = (array) => {
-  const randomIndex = getRandomIntegerNumber(0, array.length - 1);
-
-  return array[randomIndex];
-};
-
 export const formatTime = (time) => {
-  const duration = moment.duration(time);
+  const duration = moment.duration(time, `minutes`);
 
   return moment.utc(duration.asMilliseconds()).format(`h[h] mm[m]`);
 };
@@ -25,5 +15,5 @@ export const formatDate = (date) => {
 };
 
 export const formatCommentDate = (date) => {
-  return moment(date).format(`DD MMMM YYYY, HH:MM`);
+  return moment(date).format(`YYYY/MM/DD HH:MM`);
 };

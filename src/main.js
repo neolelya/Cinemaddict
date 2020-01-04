@@ -1,7 +1,7 @@
+import API from './api';
 import PageController from './controllers/page-controller';
 import UserProfileComponent from './components/profile-rating';
 import FilmsContainer from './components/films-container';
-import {generateFilms} from './mock/film';
 import {render, RenderPosition} from './utils/render';
 import Movies from './models/movies';
 import FilterController from './controllers/filter-controller';
@@ -9,41 +9,45 @@ import {MenuType} from './components/filters';
 import {getProfileRank} from './models/profile';
 import StatisticsController from './controllers/statistics-controller';
 
-const FILMS_COUNT = 23;
+const AUTHORIZATION = `Basic 8rklKE83521erYEMp`;
+const URL = `https://htmlacademy-es-10.appspot.com/cinemaddict`;
 
+const api = new API(URL, AUTHORIZATION);
 const moviesModel = new Movies();
-moviesModel.setMovies(generateFilms(FILMS_COUNT));
-
-const WATCHED_FILMS_QUANTITY = moviesModel.getMoviesNumber(moviesModel.getMovies());
 
 const siteMainElement = document.querySelector(`.main`);
 const siteHeaderElement = document.querySelector(`.header`);
-
-render(siteHeaderElement, new UserProfileComponent(getProfileRank(WATCHED_FILMS_QUANTITY)), RenderPosition.BEFOREEND);
-
 const filters = new FilterController(siteMainElement, moviesModel);
-filters.render();
-
 const filmsComponent = new FilmsContainer();
-render(siteMainElement, filmsComponent, RenderPosition.BEFOREEND);
+const pageController = new PageController(filmsComponent, moviesModel, api);
 
-const pageController = new PageController(filmsComponent, moviesModel);
+api.getMovies()
+  .then((movies) => {
+    moviesModel.setMovies(movies);
+    const WATCHED_FILMS_QUANTITY = moviesModel.getMoviesNumber(moviesModel.getMovies());
 
-const statisticsController = new StatisticsController(siteMainElement, moviesModel, WATCHED_FILMS_QUANTITY);
-statisticsController.render();
+    const statisticsController = new StatisticsController(siteMainElement, moviesModel, WATCHED_FILMS_QUANTITY);
 
-statisticsController.hide();
-pageController.render();
+    render(siteHeaderElement, new UserProfileComponent(getProfileRank(WATCHED_FILMS_QUANTITY)), RenderPosition.BEFOREEND);
+    filters.render();
+    render(siteMainElement, filmsComponent, RenderPosition.BEFOREEND);
+    statisticsController.render();
+    statisticsController.hide();
 
-filters.setOnChange((menuType) => {
-  switch (menuType) {
-    case MenuType.FILTER:
-      statisticsController.hide();
-      filmsComponent.show();
-      break;
-    case MenuType.STATS:
-      statisticsController.show();
-      filmsComponent.hide();
-      break;
-  }
-});
+    filters.setOnChange((menuType) => {
+      switch (menuType) {
+        case MenuType.FILTER:
+          statisticsController.hide();
+          filmsComponent.show();
+          break;
+        case MenuType.STATS:
+          statisticsController.show();
+          filmsComponent.hide();
+          break;
+      }
+    });
+
+    pageController.render();
+  });
+
+
