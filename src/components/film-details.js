@@ -1,6 +1,5 @@
-import {formatDate, formatTime, formatCommentDate, getRandomArrayItem} from '../utils/utils';
+import {formatDate, formatTime, formatCommentDate} from '../utils/utils';
 import AbstractComponent from './abstract-component';
-import {PEOPLES} from '../mock/film';
 
 const createGenreTemplate = (genres) => {
   return Array.from(genres).map((genre) => `<span class="film-details__genre">${genre}</span>`).join(``);
@@ -10,12 +9,12 @@ const createCommentsTemplate = (comments) => {
   return Array.from(comments)
     .map((comment) => (`<li class="film-details__comment">
                             <span class="film-details__comment-emoji">
-                                <img src="${comment.emoji}" width="55" height="55" alt="emoji">
+                                <img src="./images/emoji/${comment.emotion}.png" width="55" height="55" alt="emoji">
                             </span>
                             <div>
                                 <p class="film-details__comment-text">${comment.comment.replace(/</g, `&lt`)}</p>
                                 <p class="film-details__comment-info">
-                                    <span class="film-details__comment-author">${comment.userName}</span>
+                                    <span class="film-details__comment-author">${comment.author}</span>
                                     <span class="film-details__comment-day">${formatCommentDate(comment.date)}</span>
                                     <button class="film-details__comment-delete">Delete</button>
                                 </p>
@@ -78,31 +77,24 @@ const createUserRatingTemplate = (poster, title) => {
   );
 };
 
-const createFilmDetailsTemplate = (film) => {
+const createFilmDetailsTemplate = (film, comments) => {
   const {
-    comments,
-    filmInfo: {
-      title,
-      alternativeTitle,
-      totalRating,
-      poster,
-      ageRating,
-      director,
-      writer,
-      actors,
-      release: {
-        date,
-        releaseCountry
-      },
-      runtime,
-      genres,
-      description,
-    },
-    userDetails: {
-      isWatchlist,
-      isHistory,
-      isFavorites
-    }
+    title,
+    alternativeTitle,
+    totalRating,
+    poster,
+    ageRating,
+    director,
+    writers,
+    actors,
+    releaseDate,
+    releaseCountry,
+    runtime,
+    genre,
+    description,
+    isWatchlist,
+    isHistory,
+    isFavorites
   } = film;
 
   return (
@@ -131,21 +123,31 @@ const createFilmDetailsTemplate = (film) => {
               </div>
 
               <table class="film-details__table">
-                <tr class="film-details__row">
-                  <td class="film-details__term">Director</td>
-                  <td class="film-details__cell">${director}</td>
-                </tr>
-                <tr class="film-details__row">
-                  <td class="film-details__term">Writers</td>
-                  <td class="film-details__cell">${writer}</td>
-                </tr>
-                <tr class="film-details__row">
-                  <td class="film-details__term">Actors</td>
-                  <td class="film-details__cell">${actors}</td>
-                </tr>
+              
+              ${director ?
+      `<tr class="film-details__row">
+        <td class="film-details__term">Director</td>
+        <td class="film-details__cell">${director}</td>
+      </tr>`
+      : ``
+    }
+              ${writers.size > 0 ?
+      `<tr class="film-details__row">
+        <td class="film-details__term">Writers</td>
+        <td class="film-details__cell">${[...writers].join(`, `)}</td>
+      </tr>`
+      : ``
+    }
+              ${actors.size > 0 ?
+      `<tr class="film-details__row">
+        <td class="film-details__term">Actors</td>
+        <td class="film-details__cell">${[...actors].join(`, `)}</td>
+      </tr>`
+      : ``
+    }
                 <tr class="film-details__row">
                   <td class="film-details__term">Release Date</td>
-                  <td class="film-details__cell">${formatDate(date)}</td>
+                  <td class="film-details__cell">${formatDate(releaseDate)}</td>
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Runtime</td>
@@ -155,15 +157,19 @@ const createFilmDetailsTemplate = (film) => {
                   <td class="film-details__term">Country</td>
                   <td class="film-details__cell">${releaseCountry}</td>
                 </tr>
-                <tr class="film-details__row">
-                  <td class="film-details__term">Genre${genres.size > 1 ? `s` : ``}</td>
-                  <td class="film-details__cell">
-                    ${createGenreTemplate(genres)}
-                  </td>
-                </tr>
+                
+                ${genre.size > 0 ?
+      `<tr class="film-details__row">
+        <td class="film-details__term">Genre${genre.size > 1 ? `s` : ``}</td>
+        <td class="film-details__cell">
+          ${createGenreTemplate(genre)}
+        </td>
+      </tr>`
+      : ``
+    }
               </table>
 
-              <p class="film-details__film-description">${description}</p>
+              <p class="film-details__film-description">${description.slice(0, 1).toUpperCase()}${description.slice(1)}</p>
             </div>
           </div>
 
@@ -225,25 +231,20 @@ const createFilmDetailsTemplate = (film) => {
   );
 };
 
+
 export default class FilmDetails extends AbstractComponent {
-  constructor(film) {
+  constructor(film, comments) {
     super();
 
     this._film = film;
-    this._isWatchlist = !!film.userDetails.isWatchlist;
-    this._isHistory = !!film.userDetails.isHistory;
-    this._isFavorites = !!film.userDetails.isFavorites;
+    this._comments = comments;
 
     this._setEmojiHandler();
     this._setRatingButtonClickHandler();
   }
 
   getTemplate() {
-    return createFilmDetailsTemplate(this._film, {
-      isWatchlist: this._isWatchlist,
-      isHistory: this._isHistory,
-      isFavorites: this._isFavorites
-    });
+    return createFilmDetailsTemplate(this._film, this._comments);
   }
 
   setClosePopupClickHandler(handler) {
@@ -273,7 +274,7 @@ export default class FilmDetails extends AbstractComponent {
   _setRatingButtonClickHandler() {
     this.getElement().querySelectorAll(`.film-details__user-rating-input`)
       .forEach((inputItem) => inputItem.addEventListener(`click`, () => {
-        this._film.userDetails.personalRating = inputItem.value;
+        this._film.personalRating = inputItem.value;
       }));
   }
 
@@ -323,11 +324,17 @@ export default class FilmDetails extends AbstractComponent {
         const newComment = {
           emoji: this._selectedEmoji,
           comment: commentInput.value,
-          userName: getRandomArrayItem(PEOPLES),
+          userName: `random`,
           date: new Date()
         };
         handler(newComment);
       }
     });
+  }
+
+  getData() {
+    const form = this.getElement().querySelector();
+
+    return new FormData(form);
   }
 }
