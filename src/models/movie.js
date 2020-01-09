@@ -8,17 +8,17 @@ export default class Movie {
     this.poster = movie[`film_info`][`poster`];
     this.ageRating = movie[`film_info`][`age_rating`];
     this.director = movie[`film_info`][`director`];
-    this.writers = movie[`film_info`][`writers`] || [];
-    this.actors = movie[`film_info`][`actors`] || [];
-    this.releaseDate = movie[`film_info`][`release`][`date`] ? new Date(movie[`film_info`][`release`][`date`]) : null;
+    this.writers = Array.from(movie[`film_info`][`writers`]) || [];
+    this.actors = Array.from(movie[`film_info`][`actors`]) || [];
+    this.releaseDate = new Date(movie[`film_info`][`release`][`date`]) || null;
     this.releaseCountry = movie[`film_info`][`release`][`release_country`];
     this.runtime = movie[`film_info`][`runtime`];
-    this.genre = movie[`film_info`][`genre`] || [];
+    this.genre = new Set(movie[`film_info`][`genre`] || []);
     this.description = movie[`film_info`][`description`];
     this.personalRating = movie[`user_details`][`personal_rating`];
     this.isWatchlist = Boolean(movie[`user_details`][`watchlist`]);
     this.isHistory = Boolean(movie[`user_details`][`already_watched`]);
-    this.watchingDate = movie[`user_details`][`watching_date`] ? new Date(movie[`user_details`][`watching_date`]) : null;
+    this.watchingDate = new Date(movie[`user_details`][`watching_date`]) || null;
     this.isFavorites = Boolean(movie[`user_details`][`favorite`]);
   }
 
@@ -40,14 +40,14 @@ export default class Movie {
           'release_country': this.releaseCountry
         },
         'runtime': this.runtime,
-        'genre': this.genre,
+        'genre': Array.from(this.genre),
         'description': this.description,
       },
       'user_details': {
         'personal_rating': this.personalRating,
         'watchlist': this.isWatchlist,
         'already_watched': this.isHistory,
-        'watching_date': this.watchingDate ? this.watchingDate.toISOString() : null,
+        'watching_date': new Date(this.watchingDate).toISOString(),
         'favorite': this.isFavorites,
       },
     };
