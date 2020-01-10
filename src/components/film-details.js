@@ -1,4 +1,4 @@
-import {formatDate, formatTime, formatCommentDate} from '../utils/utils';
+import {formatDate, formatTime, formatCommentDate, CommentEmotion} from '../utils/utils';
 import AbstractComponent from './abstract-component';
 
 const createGenreTemplate = (genres) => {
@@ -23,7 +23,17 @@ const createCommentsTemplate = (comments) => {
     .join(``);
 };
 
-const createUserRatingTemplate = (poster, title) => {
+const createEmotionListTemplate = (emotions) => {
+  return Array.from(emotions)
+    .map((emotion) =>
+      (`<input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-${emotion}" value="${emotion}">
+        <label class="film-details__emoji-label" for="emoji-${emotion}">
+          <img src="./images/emoji/${emotion}.png" width="30" height="30" alt="emoji">
+        </label>`))
+    .join(``);
+};
+
+const createUserRatingTemplate = (poster, title, personalRating) => {
   return (
     `<div class="form-details__middle-container">
         <section class="film-details__user-rating-wrap">
@@ -42,33 +52,13 @@ const createUserRatingTemplate = (poster, title) => {
               <p class="film-details__user-rating-feelings">How you feel it?</p>
         
               <div class="film-details__user-rating-score">
-                <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="1" id="rating-1">
-                <label class="film-details__user-rating-label" for="rating-1">1</label>
-          
-                <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="2" id="rating-2">
-                <label class="film-details__user-rating-label" for="rating-2">2</label>
-                        
-                <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="3" id="rating-3">
-                <label class="film-details__user-rating-label" for="rating-3">3</label>
-                        
-                <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="4" id="rating-4">
-                <label class="film-details__user-rating-label" for="rating-4">4</label>
-                        
-                <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="5" id="rating-5">
-                <label class="film-details__user-rating-label" for="rating-5">5</label>
-                        
-                <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="6" id="rating-6">
-                <label class="film-details__user-rating-label" for="rating-6">6</label>
-                        
-                <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="7" id="rating-7">
-                <label class="film-details__user-rating-label" for="rating-7">7</label>
-                        
-                <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="8" id="rating-8">
-                <label class="film-details__user-rating-label" for="rating-8">8</label>
-                        
-                <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="9" id="rating-9" checked>
-                <label class="film-details__user-rating-label" for="rating-9">9</label>
-        
+                ${new Array(9)
+                  .fill(null)
+                  .map((_, index) => (
+                    `<input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="${index + 1}" id="rating-${index + 1}" ${personalRating === index + 1 ? `checked` : ``}>
+                    <label class="film-details__user-rating-label" for="rating-${index + 1}">${index + 1}</label>`
+                  ))
+                  .join(``)}
               </div>
             </section>
           </div>
@@ -94,6 +84,7 @@ const createFilmDetailsTemplate = (film, comments) => {
     description,
     isWatchlist,
     isHistory,
+    personalRating,
     isFavorites
   } = film;
 
@@ -119,6 +110,10 @@ const createFilmDetailsTemplate = (film, comments) => {
 
                 <div class="film-details__rating">
                   <p class="film-details__total-rating">${totalRating}</p>
+                  ${personalRating ?
+      `<p class="film-details__user-rating">Your rate ${personalRating}</p>`
+      : ``
+    }
                 </div>
               </div>
 
@@ -131,14 +126,14 @@ const createFilmDetailsTemplate = (film, comments) => {
       </tr>`
       : ``
     }
-              ${writers.size > 0 ?
+              ${writers.length > 0 ?
       `<tr class="film-details__row">
         <td class="film-details__term">Writers</td>
         <td class="film-details__cell">${[...writers].join(`, `)}</td>
       </tr>`
       : ``
     }
-              ${actors.size > 0 ?
+              ${actors.length > 0 ?
       `<tr class="film-details__row">
         <td class="film-details__term">Actors</td>
         <td class="film-details__cell">${[...actors].join(`, `)}</td>
@@ -185,8 +180,8 @@ const createFilmDetailsTemplate = (film, comments) => {
           </section>
         </div>
 
-        ${isHistory ? createUserRatingTemplate(poster, title) : ``}
-        
+        ${isHistory ? createUserRatingTemplate(poster, title, personalRating) : ``}
+
         <div class="form-details__bottom-container">
           <section class="film-details__comments-wrap">
             <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count"></span></h3>
@@ -203,25 +198,7 @@ const createFilmDetailsTemplate = (film, comments) => {
               </label>
 
               <div class="film-details__emoji-list">
-                <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="sleeping">
-                <label class="film-details__emoji-label" for="emoji-smile">
-                  <img src="./images/emoji/smile.png" width="30" height="30" alt="emoji">
-                </label>
-    
-                <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="neutral-face">
-                <label class="film-details__emoji-label" for="emoji-sleeping">
-                  <img src="./images/emoji/sleeping.png" width="30" height="30" alt="emoji">
-                </label>
-    
-                <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-gpuke" value="grinning">
-                <label class="film-details__emoji-label" for="emoji-gpuke">
-                  <img src="./images/emoji/puke.png" width="30" height="30" alt="emoji">
-                </label>
-    
-                <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="grinning">
-                <label class="film-details__emoji-label" for="emoji-angry">
-                  <img src="./images/emoji/angry.png" width="30" height="30" alt="emoji">
-                </label>
+                ${createEmotionListTemplate(CommentEmotion)}
               </div>
             </div>
           </section>
@@ -230,7 +207,6 @@ const createFilmDetailsTemplate = (film, comments) => {
     </section>`
   );
 };
-
 
 export default class FilmDetails extends AbstractComponent {
   constructor(film, comments) {
@@ -303,14 +279,13 @@ export default class FilmDetails extends AbstractComponent {
   }
 
   _setEmojiHandler() {
-    const regExp = /^https?:\/\/[^/]+/;
-    const emojies = this.getElement().querySelectorAll(`.film-details__emoji-label`);
-    emojies.forEach((element) => element.addEventListener(`click`, (evt) => {
+    const emotionsList = this.getElement().querySelector(`.film-details__emoji-list`);
+    emotionsList.addEventListener(`change`, (evt) => {
+      this._selectedEmotion = evt.target.value;
       this.getElement()
         .querySelector(`.film-details__add-emoji-label`)
-        .innerHTML = evt.target.outerHTML;
-      this._selectedEmoji = evt.target.src.replace(regExp, ``);
-    }));
+        .innerHTML = `<img src="./images/emoji/${this._selectedEmotion}.png" width="30" height="30" alt="emoji">`;
+    });
   }
 
   setCommentHandler(handler) {
@@ -320,11 +295,10 @@ export default class FilmDetails extends AbstractComponent {
       const ctrlKeyPressed = evt.ctrlKey;
       const isEnterKey = evt.key === `Enter`;
 
-      if (ctrlKeyPressed && isEnterKey && this._selectedEmoji) {
+      if (ctrlKeyPressed && isEnterKey && this._selectedEmotion) {
         const newComment = {
-          emoji: this._selectedEmoji,
+          emotion: this._selectedEmotion,
           comment: commentInput.value,
-          userName: `random`,
           date: new Date()
         };
         handler(newComment);
@@ -332,9 +306,52 @@ export default class FilmDetails extends AbstractComponent {
     });
   }
 
-  getData() {
-    const form = this.getElement().querySelector();
+  errorCommentSubmitHandler() {
+    const SHAKE_TIMEOUT = 600;
+    const commentForm = this.getElement().querySelector(`.film-details__new-comment`);
+    const commentInput = this.getElement().querySelector(`.film-details__comment-input`);
+    const uncheckedEmotionInputs = this.getElement().querySelectorAll(`input[name="comment-emoji"]:not(:checked)`);
 
-    return new FormData(form);
+    commentForm.style.animation = `shake ${SHAKE_TIMEOUT / 1000}s`;
+    commentInput.readOnly = true;
+    commentInput.style.border = `3px solid red`;
+    uncheckedEmotionInputs.forEach((input) => (input.disabled = true));
+
+    setTimeout(() => {
+      commentForm.style.animation = ``;
+      commentInput.readOnly = false;
+      commentInput.style.border = ``;
+      uncheckedEmotionInputs.forEach((input) => (input.disabled = false));
+    }, SHAKE_TIMEOUT);
+  }
+
+  setRatingHandler(handler) {
+    this.getElement().querySelectorAll(`.film-details__user-rating-input`)
+      .forEach((input) => input.addEventListener(`change`, handler));
+  }
+
+  setResetRatingHandler(handler) {
+    const resetRatingButton = this.getElement().querySelector(`.film-details__watched-reset`);
+
+    if (resetRatingButton) {
+      resetRatingButton.addEventListener(`click`, handler);
+    }
+  }
+
+  errorRatingSubmitHandler() {
+    const SHAKE_TIMEOUT = 600;
+    const ratingForm = this.getElement().querySelector(`.film-details__user-rating-score`);
+    const ratingInputs = this.getElement().querySelectorAll(`.film-details__user-rating-input`);
+    const uncheckedRatingInputs = this.getElement().querySelectorAll(`input[name="score"]:not(:checked)`);
+
+    ratingForm.style.animation = `shake ${SHAKE_TIMEOUT / 1000}s`;
+    ratingInputs.forEach((input) => (input.disabled = true));
+    uncheckedRatingInputs.forEach((input) => (input.labels[0].style.backgroundColor = `red`));
+
+    setTimeout(() => {
+      ratingForm.style.animation = ``;
+      ratingInputs.forEach((input) => (input.disabled = false));
+      uncheckedRatingInputs.forEach((input) => (input.labels[0].style.backgroundColor = ``));
+    }, SHAKE_TIMEOUT);
   }
 }

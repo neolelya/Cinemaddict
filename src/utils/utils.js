@@ -1,5 +1,7 @@
 import moment from 'moment';
 
+export const CommentEmotion = new Set([`smile`, `sleeping`, `puke`, `angry`]);
+
 export const formatTime = (time) => {
   const duration = moment.duration(time, `minutes`);
 

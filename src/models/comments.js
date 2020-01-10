@@ -1,16 +1,17 @@
 export default class Comments {
   constructor(comment) {
+    this.id = comment[`id`];
     this.author = comment[`author`];
     this.comment = comment[`comment`];
-    this.date = comment[`date`];
+    this.date = comment[`date`] ? new Date(comment[`date`]) : null;
     this.emotion = comment[`emotion`];
   }
 
-  parseComment(data) {
+  static parseComment(data) {
     return new Comments(data);
   }
 
-  parseComments(data) {
+  static parseComments(data) {
     return data.map(Comments.parseComment);
   }
 }

@@ -81,17 +81,43 @@ export default class MovieController {
     });
 
     this._filmDetailsComponent.setDeleteCommentHandler((index) => {
-      this._onDataChange(movie, Object.assign({}, movie, {
-        comments: [].concat(movie.comments.slice(0, index), movie.comments.slice(index + 1))
-      }));
+      const id = this._movieComments[index].id;
+      this._api.deleteComment(id)
+        .then(() => {
+          this._movieComments = [...this._movieComments.slice(0, index), ...this._movieComments.slice(index + 1)];
+          this.render(this._movie);
+        });
+    });
+
+    this._filmDetailsComponent.setRatingHandler((evt) => {
+      const newRating = parseInt(evt.target.value, 10);
+      const newMovie = Movie.cloneMovie(movie);
+      newMovie.personalRating = newRating;
+
+      this._api.updateMovie(this._movie.id, newMovie)
+        .then(() => this._onDataChange(this._movie, newMovie))
+        .catch(() => this._filmDetailsComponent.errorRatingSubmitHandler());
+    });
+
+    this._filmDetailsComponent.setResetRatingHandler((evt) => {
+      evt.preventDefault();
+
+      const newMovie = Movie.cloneMovie(movie);
+      newMovie.personalRating = 0;
+      newMovie.isHistory = !newMovie.isHistory;
+
+      this._onDataChange(this._movie, newMovie);
     });
 
     this._filmDetailsComponent.setClosePopupClickHandler(this._closePopup);
 
     this._filmDetailsComponent.setCommentHandler((newComment) => {
-      this._onDataChange(movie, Object.assign({}, movie, {
-        comments: [].concat(movie.comments, newComment)
-      }));
+      this._api.createComment(this._movie.id, newComment)
+        .then(({movie: newMovie, comments}) => {
+          this._movieComments = comments;
+          this._onDataChange(this._movie, newMovie);
+        })
+        .catch(() => this._filmDetailsComponent.errorCommentSubmitHandler());
     });
 
     if (oldFilmComponent) {
@@ -109,7 +135,7 @@ export default class MovieController {
   _openPopup() {
     this._onViewChange();
 
-    this._api.getComments(this._movie)
+    this._api.getComments(this._movie.id)
       .then((comments) => {
         this._movieComments = comments;
         this.render(this._movie);

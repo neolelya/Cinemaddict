@@ -1,6 +1,9 @@
 import Movie from './models/movie';
 import Comments from './models/comments';
 
+const MIN_OK_RESPONSE_STATUS = 200;
+const MAX_OK_RESPONSE_STATUS = 299;
+
 const Method = {
   GET: `GET`,
   POST: `POST`,
@@ -9,7 +12,7 @@ const Method = {
 };
 
 const checkStatus = (response) => {
-  if (response.status >= 200 && response.status < 300) {
+  if (response.status >= MIN_OK_RESPONSE_STATUS && response.status < MAX_OK_RESPONSE_STATUS) {
     return response;
   } else {
     throw new Error(`${response.status}: ${response.statusText}`);
@@ -28,10 +31,28 @@ export default class API {
       .then(Movie.parseMovies);
   }
 
-  getComments(movie) {
-    return this._load({url: `/comments/${movie.id}`})
+  getComments(movieId) {
+    return this._load({url: `/comments/${movieId}`})
       .then((response) => response.json())
       .then(Comments.parseComments);
+  }
+
+  createComment(movieId, comment) {
+    return this._load({
+      url: `/comments/${movieId}`,
+      method: Method.POST,
+      body: JSON.stringify(comment),
+      headers: new Headers({'Content-Type': `application/json`})
+    })
+      .then((response) => response.json())
+      .then((newData) => ({
+        movie: Movie.parseMovie(newData.movie),
+        comments: Comments.parseComments(newData.comments),
+      }));
+  }
+
+  deleteComment(id) {
+    return this._load({url: `/comments/${id}`, method: Method.DELETE});
   }
 
   updateMovie(id, movie) {

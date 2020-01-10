@@ -58,7 +58,7 @@ export default class PageController {
 
     const renderExtra = (filmsListContainer, movies) => {
       return movies.map((movie) => {
-        const filmController = new MovieController(filmsListContainer, this._onDataChange, this._onViewChange);
+        const filmController = new MovieController(filmsListContainer, this._onDataChange, this._onViewChange, this._api);
         filmController.render(movie);
 
         return filmController;
