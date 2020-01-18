@@ -127,12 +127,22 @@ export default class Movies {
       .length;
   }
 
+  getUserMoviesStats(period) {
+    const moviesFromPeriod = this._movies.filter((movie) => new Date(movie.watchingDate) > period);
+
+    return {
+      moviesNumber: this.getMoviesNumber(moviesFromPeriod),
+      duration: this._getMoviesDuration(moviesFromPeriod),
+      genres: this._getMoviesGenres(moviesFromPeriod)
+    };
+  }
+
   _getMoviesDuration(movies) {
     return movies
-        .filter((movie) => movie.isHistory)
-        .reduce((acc, it) => {
-          return acc + it.runtime;
-        }, 0);
+      .filter((movie) => movie.isHistory)
+      .reduce((acc, it) => {
+        return acc + it.runtime;
+      }, 0);
   }
 
   _getMoviesGenres(movies) {
@@ -150,15 +160,5 @@ export default class Movies {
       genres.push({name: genre, moviesNumber: genresCounter[genre]});
     });
     return genres.sort((a, b) => b.moviesNumber - a.moviesNumber);
-  }
-
-  getUserMoviesStats(period) {
-    const moviesFromPeriod = this._movies.filter((movie) => new Date(movie.watchingDate) > period);
-
-    return {
-      moviesNumber: this.getMoviesNumber(moviesFromPeriod),
-      duration: this._getMoviesDuration(moviesFromPeriod),
-      genres: this._getMoviesGenres(moviesFromPeriod)
-    };
   }
 }

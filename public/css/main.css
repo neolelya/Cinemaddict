@@ -348,6 +348,13 @@ button {
   margin-right: 0.5em;
 }
 
+.film-card__title:hover,
+.film-card__title:focus,
+.film-card__poster:hover,
+.film-card__poster:focus {
+  cursor: pointer;
+}
+
 .film-card__rating,
 .film-card__rating--good {
   color: var(--text-color-good);
@@ -1102,4 +1109,6 @@ button {
   padding-top: 50px;
   padding-bottom: 50px;
 }
-
+.loading {
+  margin: 50px auto 100px;
+}

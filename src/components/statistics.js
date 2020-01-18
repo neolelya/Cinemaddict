@@ -19,6 +19,21 @@ export const PeriodIdMap = {
   [Period.YEAR]: `statistic-year`,
 };
 
+const ChartSetting = {
+  BAR_COLOR: `#ffe800`,
+  BAR_THICKNESS: 35,
+  FONT_SIZE: 18,
+  LABEL_COLOR: `#ffffff`,
+  LABEL_OFFSET: 25,
+  LABEL_ALIGN: `start`,
+  TICKS_COLOR: `#ffffff`,
+  TICKS_PADDING: 60,
+  TICKS_FONT_SIZE: 22,
+  TICKS_FONT_STYLE: `bold`,
+  LAYOUT_PADDING_TOP: 10,
+  LAYOUT_PADDING_LEFT: 20,
+};
+
 const renderGenresChart = (genresCtx, movies) => {
   return new Chart(genresCtx, {
     plugins: ChartDataLabels,
@@ -27,29 +42,29 @@ const renderGenresChart = (genresCtx, movies) => {
       labels: movies.genres.map((genre) => genre.name),
       datasets: [{
         data: movies.genres.map((genre) => genre.moviesNumber),
-        backgroundColor: `#ffe800`,
-        barThickness: 35,
+        backgroundColor: ChartSetting.BAR_COLOR,
+        barThickness: ChartSetting.BAR_THICKNESS,
       }]
     },
     options: {
       plugins: {
         datalabels: {
-          align: `start`,
-          anchor: `start`,
-          offset: 25,
+          align: ChartSetting.LABEL_ALIGN,
+          anchor: ChartSetting.LABEL_ALIGN,
+          offset: ChartSetting.LABEL_OFFSET,
           font: {
-            size: 18
+            size: ChartSetting.FONT_SIZE
           },
-          color: `#ffffff`
+          color: ChartSetting.LABEL_COLOR
         }
       },
       scales: {
         yAxes: [{
           ticks: {
-            padding: 60,
-            fontStyle: `bold`,
-            fontColor: `#ffffff`,
-            fontSize: 22,
+            padding: ChartSetting.TICKS_PADDING,
+            fontStyle: ChartSetting.TICKS_FONT_STYLE,
+            fontColor: ChartSetting.TICKS_COLOR,
+            fontSize: ChartSetting.TICKS_FONT_SIZE,
           },
         }],
         xAxes: [{
@@ -64,8 +79,8 @@ const renderGenresChart = (genresCtx, movies) => {
       },
       layout: {
         padding: {
-          top: 10,
-          left: 20,
+          top: ChartSetting.LAYOUT_PADDING_TOP,
+          left: ChartSetting.LAYOUT_PADDING_LEFT,
         }
       },
       tooltips: {
@@ -151,6 +166,22 @@ export default class Statistics extends AbstractSmartComponent {
     this._renderChart();
   }
 
+  setChangePeriod(handler) {
+    this.getElement().addEventListener(`change`, (evt) => {
+      if (evt.target.tagName !== `INPUT`) {
+        return;
+      }
+
+      const periodItem = evt.target.id;
+
+      handler(StatsPeriod[periodItem]);
+    });
+  }
+
+  setCheckedPeriod(period) {
+    this.getElement().querySelector(`#${PeriodIdMap[period]}`).checked = true;
+  }
+
   _renderChart() {
     if (this._movies.moviesNumber === 0) {
       return;
@@ -170,21 +201,5 @@ export default class Statistics extends AbstractSmartComponent {
       this._genresChart.destroy();
       this._genresChart = null;
     }
-  }
-
-  setChangePeriod(handler) {
-    this.getElement().addEventListener(`change`, (evt) => {
-      if (evt.target.tagName !== `INPUT`) {
-        return;
-      }
-
-      const periodItem = evt.target.id;
-
-      handler(StatsPeriod[periodItem]);
-    });
-  }
-
-  setCheckedPeriod(period) {
-    this.getElement().querySelector(`#${PeriodIdMap[period]}`).checked = true;
   }
 }

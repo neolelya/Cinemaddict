@@ -114,6 +114,14 @@ export default class PageController {
     this.renderExtraFilms(filmsList);
   }
 
+  show() {
+    this._container.show();
+  }
+
+  hide() {
+    this._container.hide();
+  }
+
   _updateFilmAndRerender(oldFilm, newFilm, films, controllers) {
     const index = films.findIndex((it) => it === oldFilm);
 
@@ -148,13 +156,5 @@ export default class PageController {
   _onFilterChange() {
     this._displayedFilms = this._filmsModel.getMovies();
     this.renderFilms();
-  }
-
-  show() {
-    this._container.show();
-  }
-
-  hide() {
-    this._container.hide();
   }
 }
