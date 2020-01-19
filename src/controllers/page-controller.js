@@ -20,8 +20,8 @@ export default class PageController {
     this._displayedFilmControllers = [];
     this._topRatedControllers = [];
     this._mostCommentedControllers = [];
+    this._isLoading = false;
 
-    this._noFilmsComponent = new NoFilmsComponent();
     this._sortComponent = new SortComponent();
     this._filmsContainerComponent = new FilmsContainerComponent();
     this._filmsListComponent = new FilmsListComponent();
@@ -77,7 +77,12 @@ export default class PageController {
     this._showingFilmsCount = SHOWING_FILMS_ON_START;
     this._displayedFilms = films;
 
+    if (this._noFilmsComponent) {
+      remove(this._noFilmsComponent);
+    }
+
     if (!films.length) {
+      this._noFilmsComponent = new NoFilmsComponent(this._isLoading);
       render(container, this._noFilmsComponent, RenderPosition.BEFOREEND);
       return;
     }
@@ -120,6 +125,10 @@ export default class PageController {
 
   hide() {
     this._container.hide();
+  }
+
+  setLoadingState(isLoading) {
+    this._isLoading = isLoading;
   }
 
   _updateFilmAndRerender(oldFilm, newFilm, films, controllers) {

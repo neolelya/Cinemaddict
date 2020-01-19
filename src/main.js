@@ -14,8 +14,6 @@ const URL = `https://htmlacademy-es-10.appspot.com/cinemaddict`;
 
 const api = new API(URL, AUTHORIZATION);
 const moviesModel = new Movies();
-const loadingElement = `<h2 class="loading">Loading...</h2>`;
-let isMoviesModelLoaded = false;
 
 const siteMainElement = document.querySelector(`.main`);
 const siteHeaderElement = document.querySelector(`.header`);
@@ -23,23 +21,20 @@ const filters = new FilterController(siteMainElement, moviesModel);
 const filmsComponent = new FilmsContainer();
 const pageController = new PageController(filmsComponent, moviesModel, api);
 
-if (!isMoviesModelLoaded) {
-  render(siteMainElement, filmsComponent, RenderPosition.BEFOREEND);
-  filmsComponent.getElement().innerHTML = loadingElement;
-}
+filters.render();
+render(siteMainElement, filmsComponent, RenderPosition.BEFOREEND);
+pageController.setLoadingState(true);
+pageController.render();
 
 api.getMovies()
   .then((movies) => {
     moviesModel.setMovies(movies);
-    isMoviesModelLoaded = true;
     const WATCHED_FILMS_QUANTITY = moviesModel.getMoviesNumber(moviesModel.getMovies());
 
     const statisticsController = new StatisticsController(siteMainElement, moviesModel, WATCHED_FILMS_QUANTITY);
 
     render(siteHeaderElement, new UserProfileComponent(getProfileRank(WATCHED_FILMS_QUANTITY)), RenderPosition.BEFOREEND);
     filters.render();
-    filmsComponent.getElement().innerHTML = ``;
-    render(siteMainElement, filmsComponent, RenderPosition.BEFOREEND);
     statisticsController.render();
     statisticsController.hide();
 
@@ -56,6 +51,7 @@ api.getMovies()
       }
     });
 
+    pageController.setLoadingState(false);
     pageController.render();
   });
 
