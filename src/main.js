@@ -17,11 +17,11 @@ const moviesModel = new Movies();
 
 const siteMainElement = document.querySelector(`.main`);
 const siteHeaderElement = document.querySelector(`.header`);
-const filters = new FilterController(siteMainElement, moviesModel);
+const filtersController = new FilterController(siteMainElement, moviesModel);
 const filmsComponent = new FilmsContainer();
 const pageController = new PageController(filmsComponent, moviesModel, api);
 
-filters.render();
+filtersController.render();
 render(siteMainElement, filmsComponent, RenderPosition.BEFOREEND);
 pageController.setLoadingState(true);
 pageController.render();
@@ -34,11 +34,11 @@ api.getMovies()
     const statisticsController = new StatisticsController(siteMainElement, moviesModel, WATCHED_FILMS_QUANTITY);
 
     render(siteHeaderElement, new UserProfileComponent(getProfileRank(WATCHED_FILMS_QUANTITY)), RenderPosition.BEFOREEND);
-    filters.render();
+    filtersController.render();
     statisticsController.render();
     statisticsController.hide();
 
-    filters.setOnChange((menuType) => {
+    filtersController.setOnChange((menuType) => {
       switch (menuType) {
         case MenuType.FILTER:
           statisticsController.hide();

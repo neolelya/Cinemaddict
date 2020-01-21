@@ -51,9 +51,6 @@ export default class MovieController {
     this._filmComponent.setAlreadyWatchedClickHandler(() => {
       const newMovie = Movie.cloneMovie(movie);
       newMovie.isHistory = !newMovie.isHistory;
-      if (!newMovie.isHistory) {
-        newMovie.personalRating = 0;
-      }
 
       this._onDataChange(movie, newMovie);
     });
@@ -86,11 +83,10 @@ export default class MovieController {
       this._onDataChange(movie, newMovie);
     });
 
-    this._filmDetailsComponent.setDeleteCommentHandler((index) => {
-      const id = this._movieComments[index].id;
+    this._filmDetailsComponent.setDeleteCommentHandler((id) => {
       this._api.deleteComment(id)
         .then(() => {
-          this._movieComments = [...this._movieComments.slice(0, index), ...this._movieComments.slice(index + 1)];
+          this._movieComments = this._movieComments.filter((comment) => comment.id !== id);
           this.render(this._movie);
           this._onDataChange(movie, this._movie);
         });

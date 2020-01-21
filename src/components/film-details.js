@@ -1,9 +1,9 @@
 import {formatDate, formatTime, formatCommentDate, CommentEmotion} from '../utils/utils';
 import AbstractComponent from './abstract-component';
 import he from 'he';
+import pluralize from 'pluralize';
 
 const MAX_USER_RATING_SCORE = 9;
-const SINGLE_GENRE_QUANTITY = 1;
 const ERROR_COLOR = `red`;
 
 const createGenreTemplate = (genres) => {
@@ -160,7 +160,7 @@ const createFilmDetailsTemplate = (film, comments) => {
 
                 ${genre.size > 0 ?
       `<tr class="film-details__row">
-        <td class="film-details__term">Genre${genre.size > SINGLE_GENRE_QUANTITY ? `s` : ``}</td>
+        <td class="film-details__term">${pluralize(`Genre`, genre.size)}</td>
         <td class="film-details__cell">
           ${createGenreTemplate(genre)}
         </td>
@@ -189,7 +189,7 @@ const createFilmDetailsTemplate = (film, comments) => {
 
         <div class="form-details__bottom-container">
           <section class="film-details__comments-wrap">
-            <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count"></span></h3>
+            <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${comments.length}</span></h3>
 
             <ul class="film-details__comments-list">
               ${createCommentsTemplate(comments)}
@@ -276,7 +276,7 @@ export default class FilmDetails extends AbstractComponent {
       deleteButton.textContent = `Deleting…`;
       deleteButton.disables = true;
 
-      handler(index);
+      handler(this._comments[index].id);
     });
   }
 
