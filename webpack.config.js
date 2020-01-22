@@ -15,8 +15,6 @@ module.exports = {
   },
 
   plugins: [
-    new MomentLocalesPlugin({
-      localesToKeep: [`uk`],
-    })
+    new MomentLocalesPlugin()
   ]
 };
