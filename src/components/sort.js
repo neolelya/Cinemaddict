@@ -1,5 +1,7 @@
 import AbstractComponent from './abstract-component';
 
+const ACTIVE_BUTTON_CLASS = `sort__button--active`;
+
 export const SortType = {
   DEFAULT: `default`,
   DATE: `date`,
@@ -37,12 +39,12 @@ export default class Sort extends AbstractComponent {
 
       const sortType = evt.target.dataset.sortType;
 
-      if (evt.target.classList.contains(`sort__button--active`)) {
+      if (evt.target.classList.contains(ACTIVE_BUTTON_CLASS)) {
         return;
       }
 
-      this.getElement().querySelector(`.sort__button--active`).classList.remove(`sort__button--active`);
-      evt.target.classList.add(`sort__button--active`);
+      this.getElement().querySelector(`.${ACTIVE_BUTTON_CLASS}`).classList.remove(ACTIVE_BUTTON_CLASS);
+      evt.target.classList.add(ACTIVE_BUTTON_CLASS);
 
       if (this._currentSortType === sortType) {
         return;

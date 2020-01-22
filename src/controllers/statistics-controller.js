@@ -11,6 +11,8 @@ export default class StatisticsController {
 
     this._statistics = null;
     this._period = Period.ALL_TIME;
+
+    moviesModel.onMoviesUpdate(() => this.render());
   }
 
   render() {

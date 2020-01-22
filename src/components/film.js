@@ -1,5 +1,6 @@
 import AbstractComponent from './abstract-component';
 import {formatTime, formatYear} from '../utils/utils';
+import pluralize from 'pluralize';
 
 const DESCRIPTION_LENGTH = 139;
 
@@ -28,7 +29,7 @@ const createFilmTemplate = ({
         <img src="${poster}" alt="" class="film-card__poster">
         <p class="film-card__description">${description.length <= DESCRIPTION_LENGTH ? `${description.slice(0, 1).toUpperCase()}${description.slice(1)}` : `${`${description.slice(0, 1).toUpperCase()}${description.slice(1)}`.substr(0, DESCRIPTION_LENGTH)}...`}</p>
         <a class="film-card__comments">
-            ${comments.length} comment${comments.length > 1 ? `s` : ``}
+            ${pluralize(`comment`, comments.length, true)}
         </a>
         <form class="film-card__controls">
           <button class="film-card__controls-item button film-card__controls-item--add-to-watchlist ${isWatchlist ? `film-card__controls-item--active` : ``}"></button>

@@ -3,6 +3,8 @@ import FilmComponent from '../components/film';
 import FilmDetailsComponent from '../components/film-details';
 import {render, replace, RenderPosition} from '../utils/render';
 
+const HIDE_OVERFLOW_CLASS = `hide-overflow`;
+
 const Mode = {
   DEFAULT: `default`,
   DETAILS: `details`
@@ -21,6 +23,7 @@ export default class MovieController {
     this._movieComments = [];
     this._filmComponent = null;
     this._filmDetailsComponent = null;
+    this._isCommentsLoaded = false;
 
     this._closePopup = this._closePopup.bind(this);
     this._onEscKeydown = this._onEscKeydown.bind(this);
@@ -80,12 +83,12 @@ export default class MovieController {
       this._onDataChange(movie, newMovie);
     });
 
-    this._filmDetailsComponent.setDeleteCommentHandler((index) => {
-      const id = this._movieComments[index].id;
+    this._filmDetailsComponent.setDeleteCommentHandler((id) => {
       this._api.deleteComment(id)
         .then(() => {
-          this._movieComments = [...this._movieComments.slice(0, index), ...this._movieComments.slice(index + 1)];
+          this._movieComments = this._movieComments.filter((comment) => comment.id !== id);
           this.render(this._movie);
+          this._onDataChange(movie, this._movie);
         });
     });
 
@@ -132,6 +135,12 @@ export default class MovieController {
     }
   }
 
+  setDefaultView() {
+    if (this._mode !== Mode.DEFAULT) {
+      this._closePopup();
+    }
+  }
+
   _openPopup() {
     this._onViewChange();
 
@@ -139,17 +148,23 @@ export default class MovieController {
       .then((comments) => {
         this._movieComments = comments;
         this.render(this._movie);
+        this._isCommentsLoaded = true;
       });
 
-    document.body.classList.add(`hide-overflow`);
+    document.body.classList.add(HIDE_OVERFLOW_CLASS);
     document.body.appendChild(this._filmDetailsComponent.getElement());
     document.addEventListener(`keydown`, this._onEscKeydown);
+
+    if (!this._isCommentsLoaded) {
+      const commentsTitle = this._filmDetailsComponent.getElement().querySelector(`.film-details__comments-title`);
+      commentsTitle.innerHTML = `Comments are loading...`;
+    }
 
     this._mode = Mode.DETAILS;
   }
 
   _closePopup() {
-    document.body.classList.remove(`hide-overflow`);
+    document.body.classList.remove(HIDE_OVERFLOW_CLASS);
     document.body.removeChild(this._filmDetailsComponent.getElement());
     document.removeEventListener(`keydown`, this._onEscKeydown);
 
@@ -162,12 +177,6 @@ export default class MovieController {
     const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
 
     if (isEscKey) {
-      this._closePopup();
-    }
-  }
-
-  setDefaultView() {
-    if (this._mode !== Mode.DEFAULT) {
       this._closePopup();
     }
   }

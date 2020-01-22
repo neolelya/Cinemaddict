@@ -1,5 +1,10 @@
 import {formatDate, formatTime, formatCommentDate, CommentEmotion} from '../utils/utils';
 import AbstractComponent from './abstract-component';
+import he from 'he';
+import pluralize from 'pluralize';
+
+const MAX_USER_RATING_SCORE = 9;
+const ERROR_COLOR = `red`;
 
 const createGenreTemplate = (genres) => {
   return Array.from(genres).map((genre) => `<span class="film-details__genre">${genre}</span>`).join(``);
@@ -12,7 +17,7 @@ const createCommentsTemplate = (comments) => {
                                 <img src="./images/emoji/${comment.emotion}.png" width="55" height="55" alt="emoji">
                             </span>
                             <div>
-                                <p class="film-details__comment-text">${comment.comment.replace(/</g, `&lt`)}</p>
+                                <p class="film-details__comment-text">${he.encode(comment.comment)}</p>
                                 <p class="film-details__comment-info">
                                     <span class="film-details__comment-author">${comment.author}</span>
                                     <span class="film-details__comment-day">${formatCommentDate(comment.date)}</span>
@@ -40,19 +45,19 @@ const createUserRatingTemplate = (poster, title, personalRating) => {
           <div class="film-details__user-rating-controls">
               <button class="film-details__watched-reset" type="button">Undo</button>
           </div>
-        
+
           <div class="film-details__user-score">
           <div class="film-details__user-rating-poster">
               <img src="${poster}" alt="film-poster" class="film-details__user-rating-img">
           </div>
-        
+
           <section class="film-details__user-rating-inner">
               <h3 class="film-details__user-rating-title">${title}</h3>
-        
+
               <p class="film-details__user-rating-feelings">How you feel it?</p>
-        
+
               <div class="film-details__user-rating-score">
-                ${new Array(9)
+                ${new Array(MAX_USER_RATING_SCORE)
                   .fill(null)
                   .map((_, index) => (
                     `<input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="${index + 1}" id="rating-${index + 1}" ${personalRating === index + 1 ? `checked` : ``}>
@@ -110,7 +115,7 @@ const createFilmDetailsTemplate = (film, comments) => {
 
                 <div class="film-details__rating">
                   <p class="film-details__total-rating">${totalRating}</p>
-                  ${personalRating ?
+                  ${(isHistory && personalRating) ?
       `<p class="film-details__user-rating">Your rate ${personalRating}</p>`
       : ``
     }
@@ -118,7 +123,7 @@ const createFilmDetailsTemplate = (film, comments) => {
               </div>
 
               <table class="film-details__table">
-              
+
               ${director ?
       `<tr class="film-details__row">
         <td class="film-details__term">Director</td>
@@ -152,10 +157,10 @@ const createFilmDetailsTemplate = (film, comments) => {
                   <td class="film-details__term">Country</td>
                   <td class="film-details__cell">${releaseCountry}</td>
                 </tr>
-                
+
                 ${genre.size > 0 ?
       `<tr class="film-details__row">
-        <td class="film-details__term">Genre${genre.size > 1 ? `s` : ``}</td>
+        <td class="film-details__term">${pluralize(`Genre`, genre.size)}</td>
         <td class="film-details__cell">
           ${createGenreTemplate(genre)}
         </td>
@@ -184,7 +189,7 @@ const createFilmDetailsTemplate = (film, comments) => {
 
         <div class="form-details__bottom-container">
           <section class="film-details__comments-wrap">
-            <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count"></span></h3>
+            <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${comments.length}</span></h3>
 
             <ul class="film-details__comments-list">
               ${createCommentsTemplate(comments)}
@@ -247,13 +252,6 @@ export default class FilmDetails extends AbstractComponent {
       .addEventListener(`click`, handler);
   }
 
-  _setRatingButtonClickHandler() {
-    this.getElement().querySelectorAll(`.film-details__user-rating-input`)
-      .forEach((inputItem) => inputItem.addEventListener(`click`, () => {
-        this._film.personalRating = inputItem.value;
-      }));
-  }
-
   disableAnimation() {
     this.getElement().style.animation = `none`;
   }
@@ -263,28 +261,22 @@ export default class FilmDetails extends AbstractComponent {
   }
 
   setDeleteCommentHandler(handler) {
-    this.getElement()
-      .querySelector(`.film-details__comments-list`)
-      .addEventListener(`click`, (evt) => {
-        if (evt.target.tagName !== `BUTTON`) {
-          return;
-        }
+    const commentsList = this.getElement().querySelector(`.film-details__comments-list`);
+    const deleteButton = this.getElement().querySelector(`.film-details__comment-delete`);
 
-        evt.preventDefault();
-        const listItem = evt.target.closest(`li`);
-        const index = Array.from(listItem.parentElement.children).indexOf(listItem);
+    commentsList.addEventListener(`click`, (evt) => {
+      if (evt.target.tagName !== `BUTTON`) {
+        return;
+      }
 
-        handler(index);
-      });
-  }
+      evt.preventDefault();
+      const listItem = evt.target.closest(`li`);
+      const index = Array.from(listItem.parentElement.children).indexOf(listItem);
 
-  _setEmojiHandler() {
-    const emotionsList = this.getElement().querySelector(`.film-details__emoji-list`);
-    emotionsList.addEventListener(`change`, (evt) => {
-      this._selectedEmotion = evt.target.value;
-      this.getElement()
-        .querySelector(`.film-details__add-emoji-label`)
-        .innerHTML = `<img src="./images/emoji/${this._selectedEmotion}.png" width="30" height="30" alt="emoji">`;
+      deleteButton.textContent = `Deleting…`;
+      deleteButton.disables = true;
+
+      handler(this._comments[index].id);
     });
   }
 
@@ -314,7 +306,7 @@ export default class FilmDetails extends AbstractComponent {
 
     commentForm.style.animation = `shake ${SHAKE_TIMEOUT / 1000}s`;
     commentInput.readOnly = true;
-    commentInput.style.border = `3px solid red`;
+    commentInput.style.border = `3px solid ${ERROR_COLOR}`;
     uncheckedEmotionInputs.forEach((input) => (input.disabled = true));
 
     setTimeout(() => {
@@ -346,12 +338,29 @@ export default class FilmDetails extends AbstractComponent {
 
     ratingForm.style.animation = `shake ${SHAKE_TIMEOUT / 1000}s`;
     ratingInputs.forEach((input) => (input.disabled = true));
-    uncheckedRatingInputs.forEach((input) => (input.labels[0].style.backgroundColor = `red`));
+    uncheckedRatingInputs.forEach((input) => (input.labels[0].style.backgroundColor = ERROR_COLOR));
 
     setTimeout(() => {
       ratingForm.style.animation = ``;
       ratingInputs.forEach((input) => (input.disabled = false));
       uncheckedRatingInputs.forEach((input) => (input.labels[0].style.backgroundColor = ``));
     }, SHAKE_TIMEOUT);
+  }
+
+  _setRatingButtonClickHandler() {
+    this.getElement().querySelectorAll(`.film-details__user-rating-input`)
+      .forEach((inputItem) => inputItem.addEventListener(`click`, () => {
+        this._film.personalRating = inputItem.value;
+      }));
+  }
+
+  _setEmojiHandler() {
+    const emotionsList = this.getElement().querySelector(`.film-details__emoji-list`);
+    emotionsList.addEventListener(`change`, (evt) => {
+      this._selectedEmotion = evt.target.value;
+      this.getElement()
+        .querySelector(`.film-details__add-emoji-label`)
+        .innerHTML = `<img src="./images/emoji/${this._selectedEmotion}.png" width="30" height="30" alt="emoji">`;
+    });
   }
 }

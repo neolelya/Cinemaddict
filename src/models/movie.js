@@ -8,8 +8,8 @@ export default class Movie {
     this.poster = movie[`film_info`][`poster`];
     this.ageRating = movie[`film_info`][`age_rating`];
     this.director = movie[`film_info`][`director`];
-    this.writers = Array.from(movie[`film_info`][`writers`]) || [];
-    this.actors = Array.from(movie[`film_info`][`actors`]) || [];
+    this.writers = movie[`film_info`][`writers`] || [];
+    this.actors = movie[`film_info`][`actors`] || [];
     this.releaseDate = new Date(movie[`film_info`][`release`][`date`]) || null;
     this.releaseCountry = movie[`film_info`][`release`][`release_country`];
     this.runtime = movie[`film_info`][`runtime`];

@@ -23,6 +23,7 @@ export default class Movies {
     this._movies = [];
     this._activeFilter = FilterName.ALL;
     this._activeSortType = SortType.DEFAULT;
+    this._updateHandlers = [];
   }
 
   getMovies() {
@@ -110,36 +111,41 @@ export default class Movies {
 
     this._movies = [].concat(this._movies.slice(0, index), newMovie, this._movies.slice(index + 1));
 
-    if (this._moviesUpdateHandler) {
-      this._moviesUpdateHandler();
-    }
+    this._updateHandlers.forEach((handler) => handler());
 
     return true;
   }
 
   onMoviesUpdate(handler) {
-    this._moviesUpdateHandler = handler;
+    this._updateHandlers.push(handler);
   }
 
   getMoviesNumber(movies) {
-    return movies
-      .filter((movie) => movie.isHistory)
-      .length;
+    return movies.length;
+  }
+
+  getUserMoviesStats(period) {
+    const moviesFromPeriod = this._movies
+      .filter((movie) => movie.isHistory && new Date(movie.watchingDate) >= period);
+
+    return {
+      moviesNumber: this.getMoviesNumber(moviesFromPeriod),
+      duration: this._getMoviesDuration(moviesFromPeriod),
+      genres: this._getMoviesGenres(moviesFromPeriod)
+    };
   }
 
   _getMoviesDuration(movies) {
     return movies
-        .filter((movie) => movie.isHistory)
-        .reduce((acc, it) => {
-          return acc + it.runtime;
-        }, 0);
+      .reduce((acc, it) => {
+        return acc + it.runtime;
+      }, 0);
   }
 
   _getMoviesGenres(movies) {
     const genresCounter = {};
     const genres = [];
     movies
-      .filter((movie) => movie.isHistory)
       .forEach((movie) => {
         const genresArray = Array.from(movie.genre.keys());
         genresArray.forEach((genre) => {
@@ -150,15 +156,5 @@ export default class Movies {
       genres.push({name: genre, moviesNumber: genresCounter[genre]});
     });
     return genres.sort((a, b) => b.moviesNumber - a.moviesNumber);
-  }
-
-  getUserMoviesStats(period) {
-    const moviesFromPeriod = this._movies.filter((movie) => new Date(movie.watchingDate) > period);
-
-    return {
-      moviesNumber: this.getMoviesNumber(moviesFromPeriod),
-      duration: this._getMoviesDuration(moviesFromPeriod),
-      genres: this._getMoviesGenres(moviesFromPeriod)
-    };
   }
 }
