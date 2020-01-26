@@ -18,7 +18,7 @@ export default class Movie {
     this.personalRating = movie[`user_details`][`personal_rating`];
     this.isWatchlist = Boolean(movie[`user_details`][`watchlist`]);
     this.isHistory = Boolean(movie[`user_details`][`already_watched`]);
-    this.watchingDate = new Date(movie[`user_details`][`watching_date`]) || null;
+    this.watchingDate = this.isHistory ? new Date(movie[`user_details`][`watching_date`]) : null;
     this.isFavorites = Boolean(movie[`user_details`][`favorite`]);
   }
 

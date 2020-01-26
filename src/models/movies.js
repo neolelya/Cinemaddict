@@ -49,7 +49,7 @@ export default class Movies {
         movies = [...movies].sort((a, b) => b.totalRating - a.totalRating);
         break;
       case SortType.DATE:
-        movies = [...movies].sort((a, b) => new Date(b.releaseDate) - new Date(a.releaseDate));
+        movies = [...movies].sort((a, b) => b.releaseDate - a.releaseDate);
         break;
     }
 
@@ -80,7 +80,7 @@ export default class Movies {
     }
   }
 
-  onFilterChange(handler) {
+  filterChangeHandler(handler) {
     this._filterChangeHandler = handler;
   }
 
@@ -116,7 +116,7 @@ export default class Movies {
     return true;
   }
 
-  onMoviesUpdate(handler) {
+  moviesUpdateHandler(handler) {
     this._updateHandlers.push(handler);
   }
 
@@ -126,7 +126,7 @@ export default class Movies {
 
   getUserMoviesStats(period) {
     const moviesFromPeriod = this._movies
-      .filter((movie) => movie.isHistory && new Date(movie.watchingDate) >= period);
+      .filter((movie) => movie.isHistory && moment(movie.watchingDate) >= period);
 
     return {
       moviesNumber: this.getMoviesNumber(moviesFromPeriod),
