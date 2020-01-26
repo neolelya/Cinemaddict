@@ -1,13 +1,12 @@
 import API from './api';
 import PageController from './controllers/page-controller';
-import UserProfileComponent from './components/profile-rating';
 import FilmsContainer from './components/films-container';
 import {render, RenderPosition} from './utils/render';
 import Movies from './models/movies';
 import FilterController from './controllers/filter-controller';
 import {MenuType} from './components/filters';
-import {getProfileRank} from './models/profile';
 import StatisticsController from './controllers/statistics-controller';
+import UserProfileController from './controllers/user-profile-controller';
 
 const AUTHORIZATION = `Basic 8rklKE83521erYEMp`;
 const URL = `https://htmlacademy-es-10.appspot.com/cinemaddict`;
@@ -29,16 +28,16 @@ pageController.render();
 api.getMovies()
   .then((movies) => {
     moviesModel.setMovies(movies);
-    const WATCHED_FILMS_QUANTITY = moviesModel.getMoviesNumber(moviesModel.getMovies());
 
-    const statisticsController = new StatisticsController(siteMainElement, moviesModel, WATCHED_FILMS_QUANTITY);
+    const statisticsController = new StatisticsController(siteMainElement, moviesModel);
+    const userProfileController = new UserProfileController(siteHeaderElement, moviesModel);
 
-    render(siteHeaderElement, new UserProfileComponent(getProfileRank(WATCHED_FILMS_QUANTITY)), RenderPosition.BEFOREEND);
+    userProfileController.render();
     filtersController.render();
     statisticsController.render();
     statisticsController.hide();
 
-    filtersController.setOnChange((menuType) => {
+    filtersController.setChangeMenuHandler((menuType) => {
       switch (menuType) {
         case MenuType.FILTER:
           statisticsController.hide();

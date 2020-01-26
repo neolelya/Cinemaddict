@@ -1,12 +1,18 @@
+const UserRank = {
+  NOVICE: 1,
+  FAN: 11,
+  MOVIE_BUFF: 21,
+};
+
 export const getProfileRank = (watchedFilmsNumber) => {
   switch (true) {
-    case (watchedFilmsNumber === 0):
-      return ``;
-    case (watchedFilmsNumber >= 1 && watchedFilmsNumber < 11):
+    case (watchedFilmsNumber >= UserRank.NOVICE && watchedFilmsNumber < UserRank.FAN):
       return `Novice`;
-    case (watchedFilmsNumber >= 11 && watchedFilmsNumber < 21):
+    case (watchedFilmsNumber >= UserRank.FAN && watchedFilmsNumber < UserRank.MOVIE_BUFF):
       return `Fan`;
-    default:
+    case (watchedFilmsNumber >= UserRank.MOVIE_BUFF):
       return `Movie Buff`;
+    default:
+      return ``;
   }
 };
