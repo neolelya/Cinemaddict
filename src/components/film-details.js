@@ -1,8 +1,9 @@
-import {formatDate, formatTime, formatCommentDate, CommentEmotion} from '../utils/utils';
+import {formatDate, formatTime, formatCommentDate, commentEmotions} from '../utils/utils';
 import AbstractComponent from './abstract-component';
 import he from 'he';
 import pluralize from 'pluralize';
 
+const SHAKE_TIMEOUT = 600;
 const MAX_USER_RATING_SCORE = 9;
 const ERROR_COLOR = `red`;
 
@@ -203,7 +204,7 @@ const createFilmDetailsTemplate = (film, comments) => {
               </label>
 
               <div class="film-details__emoji-list">
-                ${createEmotionListTemplate(CommentEmotion)}
+                ${createEmotionListTemplate(commentEmotions)}
               </div>
             </div>
           </section>
@@ -293,13 +294,13 @@ export default class FilmDetails extends AbstractComponent {
           comment: commentInput.value,
           date: new Date()
         };
+        commentInput.disabled = true;
         handler(newComment);
       }
     });
   }
 
   errorCommentSubmitHandler() {
-    const SHAKE_TIMEOUT = 600;
     const commentForm = this.getElement().querySelector(`.film-details__new-comment`);
     const commentInput = this.getElement().querySelector(`.film-details__comment-input`);
     const uncheckedEmotionInputs = this.getElement().querySelectorAll(`input[name="comment-emoji"]:not(:checked)`);
@@ -331,7 +332,6 @@ export default class FilmDetails extends AbstractComponent {
   }
 
   errorRatingSubmitHandler() {
-    const SHAKE_TIMEOUT = 600;
     const ratingForm = this.getElement().querySelector(`.film-details__user-rating-score`);
     const ratingInputs = this.getElement().querySelectorAll(`.film-details__user-rating-input`);
     const uncheckedRatingInputs = this.getElement().querySelectorAll(`input[name="score"]:not(:checked)`);

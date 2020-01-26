@@ -9,7 +9,7 @@ export default class FilterController {
     this._filters = null;
     this._activeItem = MenuType.FILTER;
 
-    movies.onMoviesUpdate(() => this.render());
+    movies.moviesUpdateHandler(() => this.render());
   }
 
   render() {
@@ -27,7 +27,7 @@ export default class FilterController {
     }
   }
 
-  setOnChange(handler) {
+  setChangeMenuHandler(handler) {
     this._container.addEventListener(`click`, (evt) => {
       if (evt.target.tagName !== `A`) {
         return;

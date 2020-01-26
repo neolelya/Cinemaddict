@@ -1,8 +1,10 @@
 import Movie from './models/movie';
 import Comments from './models/comments';
 
-const MIN_OK_RESPONSE_STATUS = 200;
-const MAX_OK_RESPONSE_STATUS = 299;
+const SuccessfulClientRequestRange = {
+  MIN: 200,
+  MAX: 299
+};
 
 const Method = {
   GET: `GET`,
@@ -12,7 +14,7 @@ const Method = {
 };
 
 const checkStatus = (response) => {
-  if (response.status >= MIN_OK_RESPONSE_STATUS && response.status < MAX_OK_RESPONSE_STATUS) {
+  if (response.status >= SuccessfulClientRequestRange.MIN && response.status < SuccessfulClientRequestRange.MAX) {
     return response;
   } else {
     throw new Error(`${response.status}: ${response.statusText}`);

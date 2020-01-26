@@ -4,20 +4,23 @@ import {render, RenderPosition, replace} from '../utils/render';
 import {getProfileRank} from '../models/profile';
 
 export default class StatisticsController {
-  constructor(container, moviesModel, profileRank) {
+  constructor(container, moviesModel) {
     this._container = container;
     this._moviesModel = moviesModel;
-    this._profileRank = profileRank;
 
     this._statistics = null;
     this._period = Period.ALL_TIME;
 
-    moviesModel.onMoviesUpdate(() => this.render());
+    moviesModel.moviesUpdateHandler(() => {
+      this.render();
+      this.hide();
+    });
   }
 
   render() {
     const oldComponent = this._statistics;
-    this._statistics = new Statistics(this._moviesModel.getUserMoviesStats(this._period), getProfileRank(this._profileRank));
+    const watchedMoviesQuantity = this._moviesModel.getMoviesNumber(this._moviesModel.getMovies().filter((movie) => movie.isHistory));
+    this._statistics = new Statistics(this._moviesModel.getUserMoviesStats(this._period), getProfileRank(watchedMoviesQuantity));
     this._statistics.setCheckedPeriod(this._period);
 
     this._statistics.setChangePeriod((period) => {
