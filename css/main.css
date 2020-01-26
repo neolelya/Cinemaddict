@@ -314,16 +314,20 @@ button {
 .films-list {
   flex-basis: 100%;
   flex-shrink: 0;
-  padding-bottom: 60px;
 }
 
-.films-list__container {
+.films-list__container,
+.films-list__extra-container {
   align-items: baseline;
   display: flex;
   flex-wrap: wrap;
   padding-bottom: var(--vertical-gap);
 }
 
+.films-list__extra-container {
+  padding-top: 60px;
+  padding-bottom: 0;
+}
 
 .film-card {
   flex-basis: 230px;
