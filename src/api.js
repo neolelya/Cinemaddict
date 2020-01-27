@@ -14,7 +14,7 @@ const Method = {
 };
 
 const checkStatus = (response) => {
-  if (response.status >= SuccessfulClientRequestRange.MIN && response.status < SuccessfulClientRequestRange.MAX) {
+  if (response.status >= SuccessfulClientRequestRange.MIN && response.status <= SuccessfulClientRequestRange.MAX) {
     return response;
   } else {
     throw new Error(`${response.status}: ${response.statusText}`);
