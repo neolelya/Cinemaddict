@@ -49,7 +49,7 @@ export default class Movies {
         movies = [...movies].sort((a, b) => b.totalRating - a.totalRating);
         break;
       case SortType.DATE:
-        movies = [...movies].sort((a, b) => b.releaseDate - a.releaseDate);
+        movies = [...movies].sort((a, b) => new Date(b.releaseDate).getTime() - new Date(a.releaseDate).getTime());
         break;
     }
 
