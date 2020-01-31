@@ -1,6 +1,7 @@
 import Movie from '../models/movie';
 import FilmComponent from '../components/film';
 import {render, replace, RenderPosition} from '../utils/render';
+import {debounce} from '../utils/debounce';
 
 export default class MovieController {
   constructor(container, dataChangeHandler, viewChangeHandler) {
@@ -18,27 +19,27 @@ export default class MovieController {
 
     this._filmComponent.setDetailClickHandler(() => this._viewChangeHandler(movie));
 
-    this._filmComponent.setWatchlistClickHandler(() => {
+    this._filmComponent.setWatchlistClickHandler(debounce(() => {
       const newMovie = Movie.cloneMovie(movie);
       newMovie.isWatchlist = !newMovie.isWatchlist;
 
       this._dataChangeHandler(movie, newMovie);
-    });
+    }));
 
-    this._filmComponent.setAlreadyWatchedClickHandler(() => {
+    this._filmComponent.setAlreadyWatchedClickHandler(debounce(() => {
       const newMovie = Movie.cloneMovie(movie);
       newMovie.isHistory = !newMovie.isHistory;
       newMovie.watchingDate = new Date();
 
       this._dataChangeHandler(movie, newMovie);
-    });
+    }));
 
-    this._filmComponent.setFavoriteClickHandler(() => {
+    this._filmComponent.setFavoriteClickHandler(debounce(() => {
       const newMovie = Movie.cloneMovie(movie);
       newMovie.isFavorites = !newMovie.isFavorites;
 
       this._dataChangeHandler(movie, newMovie);
-    });
+    }));
 
     if (oldFilmComponent) {
       replace(this._filmComponent, oldFilmComponent);
