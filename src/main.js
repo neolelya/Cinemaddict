@@ -1,4 +1,4 @@
-import Api from './api/api';
+import Api from './api';
 import PageController from './controllers/page-controller';
 import FilmsContainer from './components/films-container';
 import {render, RenderPosition} from './utils/render';

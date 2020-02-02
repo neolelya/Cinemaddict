@@ -2,6 +2,7 @@ export default class Movie {
   constructor(movie) {
     this.id = movie[`id`];
     this.comments = movie[`comments`] || [];
+    this.commentsList = [];
     this.title = movie[`film_info`][`title`];
     this.alternativeTitle = movie[`film_info`][`alternative_title`];
     this.totalRating = movie[`film_info`][`total_rating`];
