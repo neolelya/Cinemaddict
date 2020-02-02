@@ -2,6 +2,9 @@ const CACHE_PREFIX = `cinemaddict-cache`;
 const CACHE_VER = `v1`;
 const CACHE_NAME = `${CACHE_PREFIX}-${CACHE_VER}`;
 
+const RESPONSE_STATUS_OK = 200;
+const RESPONSE_TYPE = `basic`;
+
 self.addEventListener(`install`, (evt) => {
   evt.waitUntil(
     caches
@@ -71,7 +74,7 @@ const fetchHandler = (evt) => {
 
         return fetch(request)
           .then((response) => {
-            if (!response || response.status !== 200 || response.type !== `basic`) {
+            if (!response || response.status !== RESPONSE_STATUS_OK || response.type !== RESPONSE_TYPE) {
               return response;
             }
 
@@ -82,9 +85,6 @@ const fetchHandler = (evt) => {
 
             return response;
           })
-          .catch(() => {
-            //DO NOTHING WITHOUT MISTAKES
-          });
       })
   );
 };
