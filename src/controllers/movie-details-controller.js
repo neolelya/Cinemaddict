@@ -1,6 +1,7 @@
 import Movie from '../models/movie';
 import FilmDetailsComponent from '../components/film-details';
 import {replace} from '../utils/render';
+import {debounce} from '../utils/debounce';
 
 const HIDE_OVERFLOW_CLASS = `hide-overflow`;
 
@@ -25,27 +26,27 @@ export default class MovieDetailsController {
 
     this._filmDetailsComponent = new FilmDetailsComponent(movie, this._movieComments);
 
-    this._filmDetailsComponent.setWatchlistClickHandler(() => {
+    this._filmDetailsComponent.setWatchlistClickHandler(debounce(() => {
       const newMovie = Movie.cloneMovie(movie);
       newMovie.isWatchlist = !newMovie.isWatchlist;
 
       this._dataChangeHandler(movie, newMovie);
-    });
+    }));
 
-    this._filmDetailsComponent.setAlreadyWatchedClickHandler(() => {
+    this._filmDetailsComponent.setAlreadyWatchedClickHandler(debounce(() => {
       const newMovie = Movie.cloneMovie(movie);
       newMovie.isHistory = !newMovie.isHistory;
       newMovie.watchingDate = new Date();
 
       this._dataChangeHandler(movie, newMovie);
-    });
+    }));
 
-    this._filmDetailsComponent.setFavoriteClickHandler(() => {
+    this._filmDetailsComponent.setFavoriteClickHandler(debounce(() => {
       const newMovie = Movie.cloneMovie(movie);
       newMovie.isFavorites = !newMovie.isFavorites;
 
       this._dataChangeHandler(movie, newMovie);
-    });
+    }));
 
     this._filmDetailsComponent.setDeleteCommentHandler((id) => {
       this._api.deleteComment(id)

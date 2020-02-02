@@ -1,5 +1,5 @@
-import Movie from './models/movie';
-import Comments from './models/comments';
+import Movie from '../models/movie';
+import Comments from '../models/comments';
 
 const SuccessfulClientRequestRange = {
   MIN: 200,
@@ -21,7 +21,7 @@ const checkStatus = (response) => {
   }
 };
 
-export default class API {
+export default class Api {
   constructor(url, authorization) {
     this._url = url;
     this._authorization = authorization;
@@ -66,6 +66,15 @@ export default class API {
     })
       .then((response) => response.json())
       .then(Movie.parseMovie);
+  }
+
+  sync(data) {
+    return this._load({
+      url: `/movies/sync`,
+      method: Method.POST,
+      body: JSON.stringify(data),
+      headers: new Headers({'Content-Type': `application/json`})
+    }).then((response) => response.json());
   }
 
   _load({url, method = Method.GET, body = null, headers = new Headers()}) {

@@ -17,5 +17,34 @@ export const formatDate = (date) => {
 };
 
 export const formatCommentDate = (date) => {
-  return moment(date).format(`YYYY/MM/DD HH:MM`);
+  let result = moment(date).format(`YYYY/MM/DD HH:MM`);
+
+  switch (true) {
+    case moment(date).isBetween(moment().subtract(59, `seconds`), moment()):
+      result = `now`;
+      break;
+    case moment(date).isBetween(moment().subtract(3, `minutes`), moment()):
+      result = `a minute ago`;
+      break;
+    case moment(date).isBetween(moment().subtract(59, `minutes`), moment()):
+      result = `a few minutes ago`;
+      break;
+    case moment(date).isBetween(moment().subtract(2, `hours`), moment()):
+      result = `an hour ago`;
+      break;
+    case moment(date).isBetween(moment().subtract(24, `hours`), moment()):
+      result = `a few hours ago`;
+      break;
+    case moment(date).isBetween(moment().subtract(1, `days`), moment()):
+      result = `a day ago`;
+      break;
+    case moment(date).isBetween(moment().subtract(2, `days`), moment()):
+      result = `two days ago`;
+      break;
+    case moment(date).isBetween(moment().subtract(3, `days`), moment()):
+      result = `three days ago`;
+      break;
+  }
+
+  return result;
 };
