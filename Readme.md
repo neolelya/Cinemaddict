@@ -6,6 +6,8 @@ It's a service for fans of big movies. Detailed information about the latest hot
 * JS (ECMAScript 6)
 * ESLint
 * Build process (Webpack)
+* AJAX (Fetch)
+* ServiceWorker for offline work
 * Used libraries: chart.js, moment
 
 
