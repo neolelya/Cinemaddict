@@ -1,4 +1,4 @@
-# Cinemaaddict
+# CINEMAADDICT
 It's a service for fans of big movies. Detailed information about the latest hot movies, the ability to select and create your own list of films for viewing, discussion of movies and much more.
 
 
