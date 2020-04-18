@@ -19,5 +19,5 @@ It's a service for fans of big movies. Detailed information about the latest hot
 
 
 ### Site navigation 
-* Main page - 
-* Statistics page - 
+* Main page - https://neolelya.github.io/cinemaddict/
+* Statistics page
